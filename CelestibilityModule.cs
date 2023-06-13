@@ -19,10 +19,10 @@ namespace NoMathExpectation.Celeste.Celestibility
             Instance = this;
 #if DEBUG
             // debug builds use verbose logging
-            Logger.SetLogLevel(nameof(CelestibilityModule), LogLevel.Verbose);
+            Logger.SetLogLevel("Celestibility", LogLevel.Verbose);
 #else
             // release builds use info logging to reduce spam in log files
-            Logger.SetLogLevel(nameof(CelestibilityModule), LogLevel.Info);
+            Logger.SetLogLevel("Celestibility", LogLevel.Info);
 #endif
         }
 
@@ -39,7 +39,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             {
                 try
                 {
-                    ModAsset asset = Everest.Content.Get("nativebin/" + dll);
+                    ModAsset asset = Everest.Content.Get($"nativebin/{dll}");
                     using Stream stream = asset.Stream;
                     using Stream destination = File.OpenWrite(Path.Combine(cachePath, dll));
                     stream.CopyTo(destination);
@@ -51,12 +51,16 @@ namespace NoMathExpectation.Celeste.Celestibility
                 }
             }
 
+            Hooks.hook();
+
             UniversalSpeech.speechSay("Celestibility mod loaded.");
             LogUtil.log("Mod loaded.");
         }
 
         public override void Unload()
         {
+            Hooks.unhook();
+
             UniversalSpeech.speechSay("Celestibility mod unloaded.");
             LogUtil.log("Mod unloaded.");
         }
