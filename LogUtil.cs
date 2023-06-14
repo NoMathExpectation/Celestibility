@@ -4,7 +4,7 @@ namespace NoMathExpectation.Celeste.Celestibility
 {
     internal class LogUtil
     {
-        internal static void log(string message, LogLevel level = LogLevel.Info, bool stacktrace = false, string prefix = "Celestibility")
+        internal static void Log(string message, LogLevel level = LogLevel.Info, bool stacktrace = false, string prefix = "Celestibility")
         {
             if (stacktrace)
             {

@@ -26,9 +26,9 @@ namespace NoMathExpectation.Celeste.Celestibility
 #endif
         }
 
-        public override void Load()
+        private static void ExtractDlls()
         {
-            LogUtil.log("Extracting dlls...");
+            LogUtil.Log("Extracting dlls...");
             string cachePath = "Mods/Cache/Celestibility/nativebin";
             if (!Directory.Exists(cachePath))
             {
@@ -46,23 +46,28 @@ namespace NoMathExpectation.Celeste.Celestibility
                 }
                 catch (IOException)
                 {
-                    LogUtil.log("Dlls are currently at use, skipping.", LogLevel.Warn);
+                    LogUtil.Log("Dlls are currently at use, skipping.", LogLevel.Warn);
                     break;
                 }
             }
+        }
 
-            Hooks.hook();
+        public override void Load()
+        {
+            ExtractDlls();
 
-            UniversalSpeech.speechSay("Celestibility mod loaded.");
-            LogUtil.log("Mod loaded.");
+            Hooks.Hook();
+
+            UniversalSpeech.SpeechSay("Celestibility_loaded", def: "Celestibility mod loaded.");
+            LogUtil.Log("Mod loaded.");
         }
 
         public override void Unload()
         {
-            Hooks.unhook();
+            Hooks.Unhook();
 
-            UniversalSpeech.speechSay("Celestibility mod unloaded.");
-            LogUtil.log("Mod unloaded.");
+            UniversalSpeech.SpeechSay("Celestibility_unloaded", def: "Celestibility mod unloaded.");
+            LogUtil.Log("Mod unloaded.");
         }
     }
 }

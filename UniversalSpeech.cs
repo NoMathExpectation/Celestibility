@@ -1,13 +1,16 @@
 ﻿using Celeste;
 using Celeste.Mod;
+using Monocle;
 using MonoMod.Utils;
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
+using static Celeste.FancyText;
 using static Celeste.TextMenu;
 
 namespace NoMathExpectation.Celeste.Celestibility
 {
-    internal class UniversalSpeech
+    public class UniversalSpeech
     {
         private static class Internal
         {
@@ -18,33 +21,49 @@ namespace NoMathExpectation.Celeste.Celestibility
             public static extern int speechStop();
         }
 
-        public static int speechSay(string str, bool interrupt = false)
+        public static bool Enabled => CelestibilityModule.Settings.SpeechEnabled;
+
+        public static int SpeechSay(string str, bool interrupt = false, string def = null, bool ignoreOff = false)
         {
+            if (!(Enabled || ignoreOff))
+            {
+                return 2;
+            }
+
+            if (def is null)
+            {
+                def = str;
+            }
+
             try
             {
                 if (Dialog.Has(str))
                 {
-                    return Internal.speechSay(Dialog.Clean(str), interrupt ? 1 : 0);
+                    string translated = Dialog.Clean(str);
+                    LogUtil.Log($"Speech: {translated}", LogLevel.Verbose);
+                    return Internal.speechSay(translated, interrupt ? 1 : 0);
                 }
                 else
                 {
-                    return Internal.speechSay(str, interrupt ? 1 : 0);
+                    LogUtil.Log($"Speech: {def}", LogLevel.Verbose);
+                    return Internal.speechSay(def, interrupt ? 1 : 0);
                 }
             }
             catch (Exception)
             {
-                return Internal.speechSay(str, interrupt ? 1 : 0);
+                LogUtil.Log($"Speech: {def}", LogLevel.Verbose);
+                return Internal.speechSay(def, interrupt ? 1 : 0);
             }
         }
 
-        public static int speechStop()
+        public static int SpeechStop()
         {
             return Internal.speechStop();
         }
 
-        public static void speechSay(Item item)
+        public static void SpeechSay(Item item, bool ignoreOff = false)
         {
-            if (item is null)
+            if (!(Enabled || ignoreOff) || item is null)
             {
                 return;
             }
@@ -58,13 +77,55 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             if (!string.IsNullOrEmpty(text))
             {
-                LogUtil.log($"Textmenu item text found: {text}", LogLevel.Verbose);
-                speechSay(text, true);
+                LogUtil.Log($"Textmenu item text found: {text}", LogLevel.Verbose);
+                SpeechSay(text, true);
             }
             else
             {
-                LogUtil.log("Textmenu item text not found.", LogLevel.Verbose);
+                LogUtil.Log("Textmenu item text not found.", LogLevel.Verbose);
             }
+        }
+
+        public static void SpeechSay(FancyText.Text text, int start = 0, int end = int.MaxValue, bool ignoreOff = false)
+        {
+            if (!(Enabled || ignoreOff) || text is null)
+            {
+                return;
+            }
+
+            end = Math.Min(text.Count, end);
+            StringBuilder sb = new StringBuilder();
+            for (int i = start; i < end; i++)
+            {
+                Node node = text[i];
+                if (node is NewLine)
+                {
+                    sb.AppendLine();
+                }
+                else if (node is FancyText.Char c)
+                {
+                    sb.Append((char)c.Character);
+                }
+                else if (node is NewPage)
+                {
+                    break;
+                }
+            }
+
+            string t = sb.ToString();
+            LogUtil.Log($"FancyText Text: {t}", LogLevel.Verbose);
+            SpeechSay(t, true);
+        }
+
+        public static void SpeechSay(Entity entity, bool ignoreOff = false)
+        {
+            if (!(Enabled || ignoreOff) || entity is null)
+            {
+                return;
+            }
+
+            LogUtil.Log($"Entity: {entity}", LogLevel.Verbose);
+            Internal.speechSay(entity.GetType().ToString(), 0);
         }
     }
 }
