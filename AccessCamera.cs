@@ -12,6 +12,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
     {
         public static AccessCamera Instance;
         public static bool Enabled => CelestibilityModule.Settings.Camera;
+        public static bool Toggled => CelestibilityModule.Settings.CameraBind.Pressed;
 
         public static bool MoveToPlayerPressed => CelestibilityModule.Settings.CameraMoveToPlayer.Pressed;
         public static bool MoveLeft => CelestibilityModule.Settings.CameraMoveLeft.Pressed;
@@ -24,7 +25,25 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         public AccessCamera()
         {
             Collider = new Hitbox(1, 1);
-            Instance = this;
+
+            //Tag |= TagsExt.SubHUD;
+            Tag |= Tags.Persistent;
+            Tag |= Tags.TransitionUpdate;
+            Tag |= Tags.FrozenUpdate;
+            Tag |= Tags.PauseUpdate;
+        }
+
+        public void Toggle(bool? @bool = null)
+        {
+            if (@bool ?? !Enabled)
+            {
+                Visible = true;
+                MoveToPlayer();
+            }
+            else
+            {
+                Visible = false;
+            }
         }
 
         public void MoveToPlayer()
@@ -75,7 +94,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         public void Narrate()
         {
             LogUtil.Log($"Access camera at {X}, {Y}", LogLevel.Verbose);
-            if (!CelestibilityModule.Settings.SpeechEnabled)
+            if (!(CelestibilityModule.Settings.SpeechEnabled && Enabled))
             {
                 return;
             }
@@ -90,17 +109,33 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             }
         }
 
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
+            Instance = this;
+        }
+
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            MoveToPlayer();
+            Toggle(Enabled);
         }
 
         public override void Update()
         {
             base.Update();
 
-            if (MoveToPlayerPressed)
+            if (Toggled)
+            {
+                CelestibilityModuleSettings.ToggleCamera();
+                return;
+            }
+            if (!Enabled)
+            {
+                return;
+            }
+
+            if (Toggled || MoveToPlayerPressed)
             {
                 MoveToPlayer();
                 return;
@@ -114,6 +149,12 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             base.Render();
             Draw.Point(Position, Color.Red);
             Draw.HollowRect(X - 2, Y - 2, 5, 5, Color.Red);
+        }
+
+        public override void Removed(Scene scene)
+        {
+            base.Removed(scene);
+            Instance = null;
         }
     }
 }

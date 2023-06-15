@@ -91,7 +91,7 @@ namespace NoMathExpectation.Celeste.Celestibility
         private static void LevelLoadLevel(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes playerIntro, bool isFromLoader)
         {
             orig(self, playerIntro, isFromLoader);
-            if (AccessCamera.Enabled && !self.Entities.Any(entity => entity is AccessCamera))
+            if (!self.Entities.Any(entity => entity is AccessCamera))
             {
                 self.Add(new AccessCamera());
                 self.Entities.UpdateLists();

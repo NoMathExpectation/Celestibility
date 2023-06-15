@@ -1,11 +1,17 @@
 Celestibility_loaded=Celestibility mod 已加载。
 Celestibility_unloaded=Celestibility mod 已卸载。
 
+Celestibility_speech_on=复述功能已开启。
+Celestibility_speech_off=复述功能已关闭。
 Celestibility_setting_speech=复述文字
+Celestibility_setting_bind_speech=打开/关闭复述
 Celestibility_setting_speech_test_text=测试文字
 Celestibility_setting_speech_test_play=复述测试文字
 
+Celestibility_camera_on=照相机已开启。
+Celestibility_camera_off=照相机已关闭。
 Celestibility_setting_camera=启用照相机
+Celestibility_setting_bind_toggle_camera=打开/关闭照相机
 Celestibility_setting_bind_move_camera_to_player=移动至玩家位置
 Celestibility_setting_bind_move_camera_left=向左移动
 Celestibility_setting_bind_move_camera_right=向右移动

@@ -1,11 +1,17 @@
 Celestibility_loaded=Celestibility mod loaded.
 Celestibility_unloaded=Celestibility mod unloaded.
 
+Celestibility_speech_on=Narrate on.
+Celestibility_speech_off=Narrate off.
 Celestibility_setting_speech=Narrate Texts
+Celestibility_setting_bind_speech=Toggle Narrate
 Celestibility_setting_speech_test_text=Test Narrate Text
 Celestibility_setting_speech_test_play=Test Narrate
 
+Celestibility_camera_on=Camera on.
+Celestibility_camera_off=Camera off.
 Celestibility_setting_camera=Enable Camera
+Celestibility_setting_bind_toggle_camera=Toggle Camera
 Celestibility_setting_bind_move_camera_to_player=Move Camera To Player
 Celestibility_setting_bind_move_camera_left=Move Camera Left
 Celestibility_setting_bind_move_camera_right=Move Camera Right

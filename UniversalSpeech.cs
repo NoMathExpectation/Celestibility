@@ -125,7 +125,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
 
             LogUtil.Log($"Entity: {entity}", LogLevel.Verbose);
-            Internal.speechSay(entity.GetType().ToString(), 0);
+            SpeechSay(entity.GetType().ToString());
         }
     }
 }
