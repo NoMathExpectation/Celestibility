@@ -127,5 +127,17 @@ namespace NoMathExpectation.Celeste.Celestibility
             LogUtil.Log($"Entity: {entity}", LogLevel.Verbose);
             SpeechSay(entity.GetType().ToString());
         }
+
+        public static void SpeechSay(MenuButton button, bool ignoreOff = false)
+        {
+            if (!(Enabled || ignoreOff) || button is null)
+            {
+                return;
+            }
+
+            LogUtil.Log($"MenuButton: {button}", LogLevel.Verbose);
+            DynamicData data = DynamicData.For(button);
+            SpeechSay(data.Get<string>("label"), true);
+        }
     }
 }

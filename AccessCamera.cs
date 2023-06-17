@@ -94,6 +94,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         public void Narrate()
         {
             LogUtil.Log($"Access camera at {X}, {Y}", LogLevel.Verbose);
+            UniversalSpeech.SpeechStop();
             if (!(CelestibilityModule.Settings.SpeechEnabled && Enabled))
             {
                 return;

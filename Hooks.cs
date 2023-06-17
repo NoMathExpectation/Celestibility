@@ -22,6 +22,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.FancyText.Text.Draw += FancyTextTextDraw;
 
             On.Celeste.Level.LoadLevel += LevelLoadLevel;
+
+            On.Celeste.MenuButton.Update += MenuButtonUpdate;
         }
 
         internal static void Unhook()
@@ -37,6 +39,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.FancyText.Text.Draw -= FancyTextTextDraw;
 
             On.Celeste.Level.LoadLevel -= LevelLoadLevel;
+
+            On.Celeste.MenuButton.Update -= MenuButtonUpdate;
         }
 
         private static Item TextMenuItemEnter(On.Celeste.TextMenu.Item.orig_Enter orig, Item self, Action enter)
@@ -95,6 +99,19 @@ namespace NoMathExpectation.Celeste.Celestibility
             {
                 self.Add(new AccessCamera());
                 self.Entities.UpdateLists();
+            }
+        }
+
+
+        private static MenuButton CurrentSelection;
+        private static void MenuButtonUpdate(On.Celeste.MenuButton.orig_Update orig, MenuButton self)
+        {
+            orig(self);
+            MenuButton newSelection = MenuButton.GetSelection(self.Scene);
+            if (CurrentSelection != newSelection)
+            {
+                UniversalSpeech.SpeechSay(newSelection);
+                CurrentSelection = newSelection;
             }
         }
     }
