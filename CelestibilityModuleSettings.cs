@@ -68,6 +68,10 @@ namespace NoMathExpectation.Celeste.Celestibility
         public ButtonBinding CameraMovePrecise { get; set; } = new ButtonBinding(0, Keys.RightShift);
         [SettingName("Celestibility_setting_bind_camera_narrate")]
         public ButtonBinding CameraNarrate { get; set; } = new ButtonBinding(0, Keys.U);
+        [SettingName("Celestibility_setting_bind_camera_position")]
+        public ButtonBinding CameraPosition { get; set; } = new ButtonBinding(0, Keys.OemOpenBrackets);
+        [SettingName("Celestibility_setting_bind_player_position")]
+        public ButtonBinding PlayerPosition { get; set; } = new ButtonBinding(0, Keys.OemCloseBrackets);
 
         public void CreateCameraEntry(TextMenu menu, bool inGame)
         {

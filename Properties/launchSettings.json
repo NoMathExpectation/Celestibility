@@ -3,7 +3,7 @@
     "Celestibility": {
       "commandName": "Project",
       "remoteDebugEnabled": true,
-      "remoteDebugMachine": "http://localhost:32270/"
+      "remoteDebugMachine": "http://localhost:38038/"
     }
   }
 }

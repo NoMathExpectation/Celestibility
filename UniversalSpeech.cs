@@ -1,8 +1,10 @@
 ﻿using Celeste;
 using Celeste.Mod;
+using Microsoft.Xna.Framework.Input;
 using Monocle;
 using MonoMod.Utils;
 using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using static Celeste.FancyText;
@@ -61,18 +63,95 @@ namespace NoMathExpectation.Celeste.Celestibility
             return Internal.speechStop();
         }
 
-        public static void SpeechSay(Item item, bool ignoreOff = false)
+        private static bool IsOption(object obj)
         {
-            if (!(Enabled || ignoreOff) || item is null)
+            Type t = obj.GetType();
+            do
+            {
+                if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Option<>))
+                {
+                    return true;
+                }
+                t = t.BaseType;
+            } while (t != null);
+            return false;
+        }
+
+        public static void SpeechSay(Item item, bool update = false)
+        {
+            if (!Enabled || item is null)
             {
                 return;
             }
 
+            LogUtil.Log($"Item: {item}", LogLevel.Verbose);
+
             DynamicData data = DynamicData.For(item);
-            string text = data.Get<string>("Label");
-            if (string.IsNullOrEmpty(text))
+            string text = "";
+
+            if (!update)
             {
-                text = data.Get<string>("Title");
+                text = data.Get<string>("Label");
+                if (string.IsNullOrEmpty(text))
+                {
+                    text = data.Get<string>("Title");
+                }
+            }
+
+            if (item is TextMenuExt.IntSlider slider)
+            {
+                text += ", " + slider.Index;
+            }
+
+            if (IsOption(item))
+            {
+                DynamicData values = DynamicData.For(data.Get("Values"));
+                int index = data.Get<int>("Index");
+                text += ", " + DynamicData.For(values.Invoke("get_Item", index)).Get<string>("Item1");
+            }
+
+            if (item is Setting bindSetting)
+            {
+                Binding binding = bindSetting.Binding;
+                if (binding is not null)
+                {
+                    if (bindSetting.BindingController)
+                    {
+                        if (binding.Controller is not null)
+                        {
+                            foreach (Buttons b in binding.Controller)
+                            {
+                                string key = $"Celestibility_speech_Buttons_{b}";
+                                if (Dialog.Has(key))
+                                {
+                                    text += ", " + Dialog.Clean(key);
+                                }
+                                else
+                                {
+                                    text += ", " + b;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (binding.Keyboard is not null)
+                        {
+                            foreach (Keys k in binding.Keyboard)
+                            {
+                                string key = $"Celestibility_speech_Keys_{k}";
+                                if (Dialog.Has(key))
+                                {
+                                    text += ", " + Dialog.Clean(key);
+                                }
+                                else
+                                {
+                                    text += ", " + k;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             if (!string.IsNullOrEmpty(text))
@@ -125,7 +204,54 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
 
             LogUtil.Log($"Entity: {entity}", LogLevel.Verbose);
-            SpeechSay(entity.GetType().ToString());
+            Type entityType = entity.GetType();
+            string fullNameKey = entityType.FullName.Replace('.', '_');
+
+            string methodKey = $"Celestibility_speech_entity_invoke_{fullNameKey}";
+            if (Dialog.Has(methodKey))
+            {
+                string method = Dialog.Clean(methodKey).Replace('_', '.');
+                try
+                {
+                    int split = method.LastIndexOf('.');
+                    Type invokeType = Type.GetType(method.Substring(0, split));
+                    MethodInfo invokeMethod = invokeType.GetMethod(method.Substring(split + 1), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { entityType }, null);
+                    invokeMethod.Invoke(null, new object[] { entity });
+                    return;
+                }
+                catch (Exception e)
+                {
+                    LogUtil.Log($"Unable to invoke method {method} for entity speech {entityType.FullName}.", LogLevel.Error);
+                    LogUtil.Log(e);
+                }
+            }
+
+            string soundKey = $"Celestibility_speech_entity_sound_{fullNameKey}";
+            if (Dialog.Has(soundKey))
+            {
+                string sound = Dialog.Clean(soundKey);
+                try
+                {
+                    SoundEmitter.Play(sound);
+                    return;
+                }
+                catch (Exception e)
+                {
+                    LogUtil.Log($"Unable to play sound {sound} for entity speech {entityType.FullName}.", LogLevel.Error);
+                    LogUtil.Log(e);
+                }
+            }
+
+            string textKey = $"Celestibility_speech_entity_text_{fullNameKey}";
+            if (Dialog.Has(textKey))
+            {
+                string text = Dialog.Clean(textKey);
+                SpeechSay(text);
+                return;
+            }
+
+            LogUtil.Log($"Unable to find speech way for entity speech {entityType.FullName}.", LogLevel.Verbose);
+            SpeechSay(entityType.ToString());
         }
 
         public static void SpeechSay(MenuButton button, bool ignoreOff = false)
@@ -138,6 +264,91 @@ namespace NoMathExpectation.Celeste.Celestibility
             LogUtil.Log($"MenuButton: {button}", LogLevel.Verbose);
             DynamicData data = DynamicData.For(button);
             SpeechSay(data.Get<string>("label"), true);
+        }
+
+        public static void SpeechSay(Strawberry berry)
+        {
+            bool collected = SaveData.Instance.CheckStrawberry(berry.ID);
+            string text = Dialog.Clean($"Celestibility_speech_entity_text_Celeste_Strawberry_{(collected ? "" : "un")}collected");
+            if (berry.Moon)
+            {
+                text += " " + Dialog.Clean("Celestibility_speech_entity_text_Celeste_Strawberry_moon");
+            }
+            else if (berry.Golden)
+            {
+                text += " " + Dialog.Clean("Celestibility_speech_entity_text_Celeste_Strawberry_golden");
+            }
+            else
+            {
+                text += " " + Dialog.Clean("Celestibility_speech_entity_text_Celeste_Strawberry_normal");
+            }
+            SpeechSay(text);
+        }
+
+        public static void SpeechSay(OuiFileSelectSlot slot)
+        {
+            if (slot is null)
+            {
+                return;
+            }
+
+            if (!slot.Exists)
+            {
+                SpeechSay("file_newgame", true);
+                return;
+            }
+
+            if (slot.Corrupted)
+            {
+                SpeechSay("file_corrupted", true);
+                return;
+            }
+
+            SpeechSay(string.Format(Dialog.Get("Celestibility_speech_fileslot"), slot.Name, slot.Time, slot.Deaths.Amount, slot.SaveData.TotalStrawberries_Safe), true);
+        }
+
+        public static void SpeechSay(OuiFileSelectSlot.Button button)
+        {
+            SpeechSay(button.Label, true);
+        }
+
+        public static void SpeechSay(OuiAssistMode assist, int index = 0, int enable = 1)
+        {
+            object pages = DynamicData.For(assist).Get("pages");
+            int max = DynamicData.For(pages).Get<int>("Count");
+            if (index == max)
+            {
+                SpeechSay("ASSIST_ASK", true);
+                if (enable == 0)
+                {
+                    SpeechSay("ASSIST_YES");
+                }
+                else
+                {
+                    SpeechSay("ASSIST_NO");
+                }
+                return;
+            }
+            else if (index > max)
+            {
+                return;
+            }
+
+            object page = DynamicData.For(pages).Invoke("get_Item", index);
+            FancyText.Text text = DynamicData.For(page).Get<FancyText.Text>("Text");
+            SpeechSay(text);
+        }
+
+        public static void SpeechSayAssistUpdate(int enable)
+        {
+            if (enable == 0)
+            {
+                SpeechSay("ASSIST_YES", true);
+            }
+            else
+            {
+                SpeechSay("ASSIST_NO", true);
+            }
         }
     }
 }

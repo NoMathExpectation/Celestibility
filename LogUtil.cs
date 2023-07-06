@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod;
+using System;
 
 namespace NoMathExpectation.Celeste.Celestibility
 {
@@ -14,6 +15,11 @@ namespace NoMathExpectation.Celeste.Celestibility
             {
                 Logger.Log(level, prefix, message);
             }
+        }
+
+        internal static void Log(Exception exception, string prefix = "Celestibility")
+        {
+            Logger.LogDetailed(exception, prefix);
         }
     }
 }

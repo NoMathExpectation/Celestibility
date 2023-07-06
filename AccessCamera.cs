@@ -21,6 +21,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         public static bool MoveDown => CelestibilityModule.Settings.CameraMoveDown.Pressed;
         public static bool MovePrecise => CelestibilityModule.Settings.CameraMovePrecise.Check;
         public static bool NarrateEntity => CelestibilityModule.Settings.CameraNarrate.Pressed;
+        public static bool CameraPosition => CelestibilityModule.Settings.CameraPosition.Pressed;
+        public static bool PlayerPosition => CelestibilityModule.Settings.PlayerPosition.Pressed;
 
         public AccessCamera()
         {
@@ -49,6 +51,11 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         public void MoveToPlayer()
         {
             Player player = Scene.Tracker.GetEntity<Player>();
+            if (player is null)
+            {
+                return;
+            }
+
             X = player.X;
             Y = player.Y - 4;
             Narrate();
@@ -134,6 +141,20 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             if (!Enabled)
             {
                 return;
+            }
+
+            if (CameraPosition)
+            {
+                UniversalSpeech.SpeechSay($"{X}, {Y}", true);
+            }
+
+            if (PlayerPosition)
+            {
+                Player player = Scene.Tracker.GetEntity<Player>();
+                if (player is not null)
+                {
+                    UniversalSpeech.SpeechSay($"{player.X}, {player.Y}", true);
+                }
             }
 
             if (Toggled || MoveToPlayerPressed)
