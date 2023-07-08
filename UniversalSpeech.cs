@@ -12,7 +12,7 @@ using static Celeste.TextMenu;
 
 namespace NoMathExpectation.Celeste.Celestibility
 {
-    public class UniversalSpeech
+    public static class UniversalSpeech
     {
         private static class Internal
         {
@@ -50,7 +50,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
         }
 
-        public static int SpeechSay(string str, bool interrupt = false, string def = null, bool ignoreOff = false)
+        public static int SpeechSay(this string str, bool interrupt = false, string def = null, bool ignoreOff = false)
         {
             if (!(Enabled || ignoreOff))
             {
@@ -67,7 +67,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             {
                 if (Dialog.Has(str))
                 {
-                    string translated = Dialog.Clean(str);
+                    string translated = str.DialogClean();
                     LogUtil.Log($"Speech: {translated}", LogLevel.Verbose);
                     speech = translated;
                 }
@@ -101,7 +101,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             return Internal.speechStop();
         }
 
-        private static bool IsOption(object obj)
+        private static bool IsOption(this object obj)
         {
             Type t = obj.GetType();
             do
@@ -115,7 +115,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             return false;
         }
 
-        public static void SpeechSay(Item item, bool update = false)
+        public static void SpeechSay(this Item item, bool update = false)
         {
             if (!Enabled || item is null)
             {
@@ -141,11 +141,20 @@ namespace NoMathExpectation.Celeste.Celestibility
                 text += ", " + slider.Index;
             }
 
-            if (IsOption(item))
+            if (item.IsOption())
             {
                 DynamicData values = DynamicData.For(data.Get("Values"));
                 int index = data.Get<int>("Index");
                 text += ", " + DynamicData.For(values.Invoke("get_Item", index)).Get<string>("Item1");
+            }
+
+            if (item is TextMenuExt.OptionSubMenu optionSubMenu)
+            {
+                text += ", " + optionSubMenu.Menus[optionSubMenu.MenuIndex].Item1;
+                if (optionSubMenu.CurrentMenu.Count > 0)
+                {
+                    text += ", " + "Celestibility_optionSubMenu_press_hint".DialogClean();
+                }
             }
 
             if (item is Setting bindSetting)
@@ -162,7 +171,7 @@ namespace NoMathExpectation.Celeste.Celestibility
                                 string key = $"Celestibility_speech_Buttons_{b}";
                                 if (Dialog.Has(key))
                                 {
-                                    text += ", " + Dialog.Clean(key);
+                                    text += ", " + key.DialogClean();
                                 }
                                 else
                                 {
@@ -180,7 +189,7 @@ namespace NoMathExpectation.Celeste.Celestibility
                                 string key = $"Celestibility_speech_Keys_{k}";
                                 if (Dialog.Has(key))
                                 {
-                                    text += ", " + Dialog.Clean(key);
+                                    text += ", " + key.DialogClean();
                                 }
                                 else
                                 {
@@ -195,7 +204,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             if (!string.IsNullOrEmpty(text))
             {
                 LogUtil.Log($"Textmenu item text found: {text}", LogLevel.Verbose);
-                SpeechSay(text, true);
+                text.SpeechSay(true);
             }
             else
             {
@@ -203,7 +212,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
         }
 
-        public static void SpeechSay(FancyText.Text text, int start = 0, int end = int.MaxValue, bool ignoreOff = false)
+        public static void SpeechSay(this FancyText.Text text, int start = 0, int end = int.MaxValue, bool ignoreOff = false)
         {
             if (!(Enabled || ignoreOff) || text is null)
             {
@@ -231,10 +240,10 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             string t = sb.ToString();
             LogUtil.Log($"FancyText Text: {t}", LogLevel.Verbose);
-            SpeechSay(t, true);
+            t.SpeechSay(true);
         }
 
-        public static void SpeechSay(Entity entity, bool ignoreOff = false)
+        public static void SpeechSay(this Entity entity, bool ignoreOff = false)
         {
             if (!(Enabled || ignoreOff) || entity is null)
             {
@@ -248,7 +257,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             string methodKey = $"Celestibility_speech_entity_invoke_{fullNameKey}";
             if (Dialog.Has(methodKey))
             {
-                string method = Dialog.Clean(methodKey).Replace('_', '.');
+                string method = methodKey.DialogClean().Replace('_', '.');
                 try
                 {
                     int split = method.LastIndexOf('.');
@@ -267,7 +276,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             string soundKey = $"Celestibility_speech_entity_sound_{fullNameKey}";
             if (Dialog.Has(soundKey))
             {
-                string sound = Dialog.Clean(soundKey);
+                string sound = soundKey.DialogClean();
                 try
                 {
                     SoundEmitter.Play(sound);
@@ -283,16 +292,16 @@ namespace NoMathExpectation.Celeste.Celestibility
             string textKey = $"Celestibility_speech_entity_text_{fullNameKey}";
             if (Dialog.Has(textKey))
             {
-                string text = Dialog.Clean(textKey);
-                SpeechSay(text);
+                string text = textKey.DialogClean();
+                text.SpeechSay();
                 return;
             }
 
             LogUtil.Log($"Unable to find speech way for entity speech {entityType.FullName}.", LogLevel.Verbose);
-            SpeechSay(entityType.ToString());
+            entityType.ToString().SpeechSay();
         }
 
-        public static void SpeechSay(MenuButton button)
+        public static void SpeechSay(this MenuButton button)
         {
             if (!Enabled || button is null)
             {
@@ -303,11 +312,11 @@ namespace NoMathExpectation.Celeste.Celestibility
             DynamicData data = DynamicData.For(button);
             if (data.TryGet<string>("label", out var label))
             {
-                SpeechSay(label, true);
+                label.SpeechSay(true);
             }
         }
 
-        public static void SpeechSay(Strawberry berry)
+        public static void SpeechSay(this Strawberry berry)
         {
             bool collected = SaveData.Instance.CheckStrawberry(berry.ID);
             string text = Dialog.Clean($"Celestibility_speech_entity_text_Celeste_Strawberry_{(collected ? "" : "un")}collected");
@@ -323,10 +332,26 @@ namespace NoMathExpectation.Celeste.Celestibility
             {
                 text += " " + Dialog.Clean("Celestibility_speech_entity_text_Celeste_Strawberry_normal");
             }
-            SpeechSay(text);
+            text.SpeechSay();
         }
 
-        public static void SpeechSay(OuiFileSelectSlot slot)
+        public static string SpeechRender(this StrawberriesCounter counter)
+        {
+            if (counter is null)
+            {
+                return "";
+            }
+
+            string result = "" + counter.Amount;
+            if (counter.ShowOutOf && counter.OutOf > -1)
+            {
+                result += "/" + counter.OutOf;
+            }
+
+            return result;
+        }
+
+        public static void SpeechSay(this OuiFileSelectSlot slot)
         {
             if (slot is null)
             {
@@ -335,38 +360,38 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             if (!slot.Exists)
             {
-                SpeechSay("file_newgame", true);
+                "file_newgame".SpeechSay(true);
                 return;
             }
 
             if (slot.Corrupted)
             {
-                SpeechSay("file_corrupted", true);
+                "file_corrupted".SpeechSay(true);
                 return;
             }
 
-            SpeechSay(string.Format(Dialog.Get("Celestibility_speech_fileslot"), slot.Name, slot.Time, slot.Deaths.Amount, slot.SaveData.TotalStrawberries_Safe), true);
+            string.Format(Dialog.Get("Celestibility_speech_fileslot"), slot.Name, slot.Time, slot.Deaths.Amount, slot.Strawberries.SpeechRender()).SpeechSay(true);
         }
 
-        public static void SpeechSay(OuiFileSelectSlot.Button button)
+        public static void SpeechSay(this OuiFileSelectSlot.Button button)
         {
-            SpeechSay(button.Label, true);
+            button.Label.SpeechSay(true);
         }
 
-        public static void SpeechSay(OuiAssistMode assist, int index = 0, int enable = 1)
+        public static void SpeechSay(this OuiAssistMode assist, int index = 0, int enable = 1)
         {
             object pages = DynamicData.For(assist).Get("pages");
             int max = DynamicData.For(pages).Get<int>("Count");
             if (index == max)
             {
-                SpeechSay("ASSIST_ASK", true);
+                "ASSIST_ASK".SpeechSay(true);
                 if (enable == 0)
                 {
-                    SpeechSay("ASSIST_YES");
+                    "ASSIST_YES".SpeechSay();
                 }
                 else
                 {
-                    SpeechSay("ASSIST_NO");
+                    "ASSIST_NO".SpeechSay();
                 }
                 return;
             }
@@ -377,19 +402,21 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             object page = DynamicData.For(pages).Invoke("get_Item", index);
             FancyText.Text text = DynamicData.For(page).Get<FancyText.Text>("Text");
-            SpeechSay(text);
+            text.SpeechSay();
         }
 
         public static void SpeechSayAssistUpdate(int enable)
         {
             if (enable == 0)
             {
-                SpeechSay("ASSIST_YES", true);
+                "ASSIST_YES".SpeechSay(true);
             }
             else
             {
-                SpeechSay("ASSIST_NO", true);
+                "ASSIST_NO".SpeechSay(true);
             }
         }
+
+
     }
 }

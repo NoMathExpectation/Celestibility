@@ -21,6 +21,7 @@ namespace NoMathExpectation.Celeste.Celestibility
         {
             LogUtil.Log("Hooking.");
 
+            On.Celeste.TextMenu.Update += TextMenuUpdate;
             On.Celeste.TextMenu.MoveSelection += TextMenuMoveSelection;
             On.Celeste.TextMenuExt.SubMenu.MoveSelection += SubMenuMoveSelection;
             On.Celeste.TextMenuExt.OptionSubMenu.MoveSelection += OptionSubMenuMoveSelection;
@@ -48,6 +49,7 @@ namespace NoMathExpectation.Celeste.Celestibility
         {
             LogUtil.Log("Unhooking.");
 
+            On.Celeste.TextMenu.Update -= TextMenuUpdate;
             On.Celeste.TextMenu.MoveSelection -= TextMenuMoveSelection;
             On.Celeste.TextMenuExt.SubMenu.MoveSelection -= SubMenuMoveSelection;
             On.Celeste.TextMenuExt.OptionSubMenu.MoveSelection -= OptionSubMenuMoveSelection;
@@ -75,22 +77,40 @@ namespace NoMathExpectation.Celeste.Celestibility
             ModOuiAssistModeInputRoutineHook = null;
         }
 
+
+        private static void TextMenuUpdate(On.Celeste.TextMenu.orig_Update orig, TextMenu self)
+        {
+            orig(self);
+
+            DynamicData data = DynamicData.For(self);
+
+            if (data.TryGet<bool?>("origFocused", out var origFocused))
+            {
+                if (origFocused != self.Focused && self.Focused)
+                {
+                    self.Current.SpeechSay();
+                }
+            }
+
+            data.Set("origFocused", self.Focused);
+        }
+
         private static void TextMenuMoveSelection(On.Celeste.TextMenu.orig_MoveSelection orig, TextMenu self, int direction, bool wiggle = false)
         {
             orig(self, direction, wiggle);
-            UniversalSpeech.SpeechSay(self.Current);
+            self.Current.SpeechSay();
         }
 
         private static void SubMenuMoveSelection(On.Celeste.TextMenuExt.SubMenu.orig_MoveSelection orig, TextMenuExt.SubMenu self, int direction, bool wiggle = false)
         {
             orig(self, direction, wiggle);
-            UniversalSpeech.SpeechSay(self.Current);
+            self.Current.SpeechSay();
         }
 
         private static void OptionSubMenuMoveSelection(On.Celeste.TextMenuExt.OptionSubMenu.orig_MoveSelection orig, TextMenuExt.OptionSubMenu self, int direction, bool wiggle = false)
         {
             orig(self, direction, wiggle);
-            UniversalSpeech.SpeechSay(self.Current);
+            self.Current.SpeechSay();
         }
 
         private static ILHook ModTextMenuUpdateHook = null;
@@ -114,13 +134,14 @@ namespace NoMathExpectation.Celeste.Celestibility
         {
             if (CurrentText != self || CurrentTextStart != start || CurrentTextEnd != end)
             {
-                UniversalSpeech.SpeechSay(self, start, end);
+                self.SpeechSay(start, end);
                 CurrentText = self;
                 CurrentTextStart = start;
                 CurrentTextEnd = end;
             }
             orig(self, position, justify, scale, alpha, start, end);
         }
+
 
         private static void LevelLoadLevel(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes playerIntro, bool isFromLoader)
         {
@@ -136,7 +157,7 @@ namespace NoMathExpectation.Celeste.Celestibility
         private static IEnumerator OuiMainMenuEnter(On.Celeste.OuiMainMenu.orig_Enter orig, OuiMainMenu self, Oui from)
         {
             yield return new SwapImmediately(orig(self, from));
-            UniversalSpeech.SpeechSay(MenuButton.GetSelection(self.Scene));
+            MenuButton.GetSelection(self.Scene).SpeechSay();
         }
 
         private static ILHook ModMenuButtonSetSelectedHook = null;
@@ -159,7 +180,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             orig(self);
             if ((fileSelectFocused != self.Focused && self.Focused == true) || fileSelectSlotIndex != self.SlotIndex)
             {
-                UniversalSpeech.SpeechSay(self.Slots[self.SlotIndex]);
+                self.Slots[self.SlotIndex].SpeechSay();
             }
             fileSelectSlotIndex = self.SlotIndex;
             fileSelectFocused = self.Focused;
@@ -171,14 +192,14 @@ namespace NoMathExpectation.Celeste.Celestibility
             DynamicData data = DynamicData.For(self);
             List<OuiFileSelectSlot.Button> buttons = data.Get<List<OuiFileSelectSlot.Button>>("buttons");
             int index = data.Get<int>("buttonIndex");
-            UniversalSpeech.SpeechSay(buttons[index]);
+            buttons[index].SpeechSay();
         }
 
         private static void OuiFileSelectSlotOnDeleteSelected(On.Celeste.OuiFileSelectSlot.orig_OnDeleteSelected orig, OuiFileSelectSlot self)
         {
             orig(self);
-            UniversalSpeech.SpeechSay("FILE_DELETE_REALLY", true);
-            UniversalSpeech.SpeechSay("FILE_DELETE_NO");
+            "FILE_DELETE_REALLY".SpeechSay(true);
+            "FILE_DELETE_NO".SpeechSay();
         }
 
         private static ILHook ModOuiFileSelectSlotOrigUpdateHook = null;
@@ -223,7 +244,7 @@ namespace NoMathExpectation.Celeste.Celestibility
         private static IEnumerator OuiAssistModeEnter(On.Celeste.OuiAssistMode.orig_Enter orig, OuiAssistMode self, Oui from)
         {
             yield return new SwapImmediately(orig(self, from));
-            UniversalSpeech.SpeechSay(self);
+            self.SpeechSay();
         }
 
         private static bool IsModOuiAssistModeInputRoutineHookPoint(Instruction inst)

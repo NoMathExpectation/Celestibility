@@ -75,7 +75,7 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             Hooks.Hook();
 
-            UniversalSpeech.SpeechSay("Celestibility_loaded", def: "Celestibility mod loaded.");
+            "Celestibility_loaded".SpeechSay(def: "Celestibility mod loaded.");
             LogUtil.Log("Mod loaded.");
         }
 
@@ -83,7 +83,7 @@ namespace NoMathExpectation.Celeste.Celestibility
         {
             Hooks.Unhook();
 
-            UniversalSpeech.SpeechSay("Celestibility_unloaded", def: "Celestibility mod unloaded.");
+            "Celestibility_unloaded".SpeechSay(def: "Celestibility mod unloaded.");
             LogUtil.Log("Mod unloaded.");
         }
     }

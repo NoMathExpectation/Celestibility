@@ -3,6 +3,8 @@ Celestibility_unloaded=Celestibility mod unloaded
 
 Celestibility_speech_fileslot={0}, play time: {1}£¬deaths: {2}, strawberrys: {3}
 
+Celestibility_optionSubMenu_press_hint=Press to configure submenu options
+
 Celestibility_speech_on=Narrate on
 Celestibility_speech_off=Narrate off
 Celestibility_setting_speech=Narrate Texts

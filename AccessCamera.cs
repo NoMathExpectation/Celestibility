@@ -112,7 +112,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             {
                 if (entity.Visible && Collide.Check(this, entity))
                 {
-                    UniversalSpeech.SpeechSay(entity);
+                    entity.SpeechSay();
                 }
             }
         }
@@ -145,7 +145,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
             if (CameraPosition)
             {
-                UniversalSpeech.SpeechSay($"{X}, {Y}", true);
+                $"{X}, {Y}".SpeechSay(true);
             }
 
             if (PlayerPosition)
@@ -153,7 +153,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
                 Player player = Scene.Tracker.GetEntity<Player>();
                 if (player is not null)
                 {
-                    UniversalSpeech.SpeechSay($"{player.X}, {player.Y}", true);
+                    $"{player.X}, {player.Y}".SpeechSay(true);
                 }
             }
 

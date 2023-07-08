@@ -21,13 +21,13 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         public void CreateSpeechEnabledEntry(TextMenu menu, bool inGame)
         {
-            menu.Add(new TextMenu.OnOff(Dialog.Clean("Celestibility_setting_speech"), SpeechEnabled)
+            menu.Add(new TextMenu.OnOff("Celestibility_setting_speech".DialogClean(), SpeechEnabled)
                 .Change(value => ToggleSpeech(value)));
         }
 
         public void CreatePlaySpeechEntry(TextMenu menu, bool inGame)
         {
-            menu.Add(new TextMenu.Button(Dialog.Clean("Celestibility_setting_speech_test_play"))
+            menu.Add(new TextMenu.Button("Celestibility_setting_speech_test_play".DialogClean())
                 .Pressed(() => UniversalSpeech.SpeechSay(TestSpeechText, true, ignoreOff: true)));
         }
 
@@ -35,13 +35,13 @@ namespace NoMathExpectation.Celeste.Celestibility
         {
             CelestibilityModule.Settings.SpeechEnabled = @bool ?? !CelestibilityModule.Settings.SpeechEnabled;
             string s = CelestibilityModule.Settings.SpeechEnabled ? "on" : "off";
-            string log = Dialog.Clean($"Celestibility_speech_{s}");
+            string log = $"Celestibility_speech_{s}".DialogClean();
             LogUtil.Log(log);
             if (Engine.Commands.Open)
             {
                 Engine.Commands.Log(log);
             }
-            UniversalSpeech.SpeechSay(log, ignoreOff: true);
+            log.SpeechSay(ignoreOff: true);
         }
 
         [Command("narrate", "(Celestibility) Toggle narrate.")]
@@ -75,7 +75,7 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         public void CreateCameraEntry(TextMenu menu, bool inGame)
         {
-            menu.Add(new TextMenu.OnOff(Dialog.Clean("Celestibility_setting_camera"), Camera)
+            menu.Add(new TextMenu.OnOff("Celestibility_setting_camera".DialogClean(), Camera)
                 .Change(value => ToggleCamera(value)));
         }
 
@@ -84,13 +84,13 @@ namespace NoMathExpectation.Celeste.Celestibility
             CelestibilityModule.Settings.Camera = @bool ?? !CelestibilityModule.Settings.Camera;
             AccessCamera.Instance?.Toggle(CelestibilityModule.Settings.Camera);
             string s = CelestibilityModule.Settings.Camera ? "on" : "off";
-            string log = Dialog.Clean($"Celestibility_camera_{s}");
+            string log = $"Celestibility_camera_{s}".DialogClean();
             LogUtil.Log(log);
             if (Engine.Commands.Open)
             {
                 Engine.Commands.Log(log);
             }
-            UniversalSpeech.SpeechSay(log);
+            log.SpeechSay();
         }
 
         [Command("camera", "(Celestibility) Toggle access camera.")]
