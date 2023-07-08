@@ -292,16 +292,19 @@ namespace NoMathExpectation.Celeste.Celestibility
             SpeechSay(entityType.ToString());
         }
 
-        public static void SpeechSay(MenuButton button, bool ignoreOff = false)
+        public static void SpeechSay(MenuButton button)
         {
-            if (!(Enabled || ignoreOff) || button is null)
+            if (!Enabled || button is null)
             {
                 return;
             }
 
             LogUtil.Log($"MenuButton: {button}", LogLevel.Verbose);
             DynamicData data = DynamicData.For(button);
-            SpeechSay(data.Get<string>("label"), true);
+            if (data.TryGet<string>("label", out var label))
+            {
+                SpeechSay(label, true);
+            }
         }
 
         public static void SpeechSay(Strawberry berry)

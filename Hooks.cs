@@ -32,7 +32,8 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             On.Celeste.Level.LoadLevel += LevelLoadLevel;
 
-            On.Celeste.MenuButton.Update += MenuButtonUpdate;
+            On.Celeste.OuiMainMenu.Enter += OuiMainMenuEnter;
+            ModMenuButtonSetSelectedHook = new ILHook(typeof(MenuButton).GetMethod("set_Selected"), ModMenuButtonSetSelected);
 
             On.Celeste.OuiFileSelect.Update += OuiFileSelectUpdate;
             On.Celeste.OuiFileSelectSlot.Select += OuiFileSelectSlotSelect;
@@ -59,7 +60,9 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             On.Celeste.Level.LoadLevel -= LevelLoadLevel;
 
-            On.Celeste.MenuButton.Update -= MenuButtonUpdate;
+            On.Celeste.OuiMainMenu.Enter -= OuiMainMenuEnter;
+            ModMenuButtonSetSelectedHook.Dispose();
+            ModMenuButtonSetSelectedHook = null;
 
             On.Celeste.OuiFileSelect.Update -= OuiFileSelectUpdate;
             On.Celeste.OuiFileSelectSlot.Select -= OuiFileSelectSlotSelect;
@@ -130,15 +133,21 @@ namespace NoMathExpectation.Celeste.Celestibility
         }
 
 
-        private static MenuButton CurrentSelection;
-        private static void MenuButtonUpdate(On.Celeste.MenuButton.orig_Update orig, MenuButton self)
+        private static IEnumerator OuiMainMenuEnter(On.Celeste.OuiMainMenu.orig_Enter orig, OuiMainMenu self, Oui from)
         {
-            orig(self);
-            MenuButton newSelection = MenuButton.GetSelection(self.Scene);
-            if (CurrentSelection != newSelection)
+            yield return new SwapImmediately(orig(self, from));
+            UniversalSpeech.SpeechSay(MenuButton.GetSelection(self.Scene));
+        }
+
+        private static ILHook ModMenuButtonSetSelectedHook = null;
+        private static void ModMenuButtonSetSelected(ILContext context)
+        {
+            ILCursor cursor = new ILCursor(context);
+
+            while (cursor.TryGotoNext(MoveType.After, inst => inst.MatchCallvirt<MenuButton>("OnSelect")))
             {
-                UniversalSpeech.SpeechSay(newSelection);
-                CurrentSelection = newSelection;
+                cursor.Emit(OpCodes.Ldarg_0);
+                cursor.EmitDelegate<Action<MenuButton>>(UniversalSpeech.SpeechSay);
             }
         }
 
