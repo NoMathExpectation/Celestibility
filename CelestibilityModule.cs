@@ -50,6 +50,23 @@ namespace NoMathExpectation.Celeste.Celestibility
                     break;
                 }
             }
+
+            string zdsrini = "ZDSRAPI.ini";
+            if (File.Exists(zdsrini))
+            {
+                return;
+            }
+            try
+            {
+                ModAsset asset = Everest.Content.Get($"nativebin/{zdsrini}");
+                using Stream stream = asset.Stream;
+                using Stream destination = File.OpenWrite(zdsrini);
+                stream.CopyTo(destination);
+            }
+            catch (IOException)
+            {
+                LogUtil.Log($"Failed to copy {zdsrini} to main menu.", LogLevel.Warn);
+            }
         }
 
         public override void Load()

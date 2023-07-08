@@ -21,15 +21,40 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             [DllImport("Celestibility/nativebin/UniversalSpeech")]
             public static extern int speechStop();
+
+            public static class Zdsr
+            {
+                [DllImport("Celestibility/nativebin/ZDSRAPI", CharSet = CharSet.Auto)]
+                public static extern int InitTTS(int type, string channelName, bool keyDownInterrupt);
+
+                [DllImport("Celestibility/nativebin/ZDSRAPI", CharSet = CharSet.Auto)]
+                public static extern int Speak(string text, bool interrput);
+
+                [DllImport("Celestibility/nativebin/ZDSRAPI")]
+                public static extern int GetSpeakState();
+
+                [DllImport("Celestibility/nativebin/ZDSRAPI")]
+                public static extern void StopSpeak();
+
+                public static bool Inited = false;
+            }
         }
 
         public static bool Enabled => CelestibilityModule.Settings.SpeechEnabled;
+
+        public static void TryInitZdsr()
+        {
+            if (Internal.Zdsr.InitTTS(0, null, false) == 0)
+            {
+                Internal.Zdsr.Inited = true;
+            }
+        }
 
         public static int SpeechSay(string str, bool interrupt = false, string def = null, bool ignoreOff = false)
         {
             if (!(Enabled || ignoreOff))
             {
-                return 2;
+                return -1;
             }
 
             if (def is null)
@@ -37,29 +62,42 @@ namespace NoMathExpectation.Celeste.Celestibility
                 def = str;
             }
 
+            string speech = "";
             try
             {
                 if (Dialog.Has(str))
                 {
                     string translated = Dialog.Clean(str);
                     LogUtil.Log($"Speech: {translated}", LogLevel.Verbose);
-                    return Internal.speechSay(translated, interrupt ? 1 : 0);
+                    speech = translated;
                 }
                 else
                 {
                     LogUtil.Log($"Speech: {def}", LogLevel.Verbose);
-                    return Internal.speechSay(def, interrupt ? 1 : 0);
+                    speech = def;
                 }
             }
             catch (Exception)
             {
                 LogUtil.Log($"Speech: {def}", LogLevel.Verbose);
-                return Internal.speechSay(def, interrupt ? 1 : 0);
+                speech = def;
             }
+
+            if (!Internal.Zdsr.Inited)
+            {
+                TryInitZdsr();
+            }
+
+            if (Internal.Zdsr.Inited && Internal.Zdsr.Speak(speech, interrupt) == 0)
+            {
+                return 0;
+            }
+            return Internal.speechSay(speech, interrupt ? 1 : 0);
         }
 
         public static int SpeechStop()
         {
+            Internal.Zdsr.StopSpeak();
             return Internal.speechStop();
         }
 
