@@ -3,6 +3,9 @@ Celestibility_unloaded=Celestibility mod 已卸载
 
 Celestibility_speech_fileslot={0}，游玩时间：{1}，死亡：{2}，草莓：{3}
 
+Celestibility_saving=保存进度中
+Celestibility_saved=进度已保存
+
 Celestibility_OptionSubMenu_press_hint=按下以展开选项菜单
 
 Celestibility_Binding_unbound=未绑定按键

@@ -41,6 +41,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.OuiFileSelectSlot.OnDeleteSelected += OuiFileSelectSlotOnDeleteSelected;
             ModOuiFileSelectSlotOrigUpdateHook = new ILHook(typeof(OuiFileSelectSlot).GetMethod("orig_Update"), ModOuiFileSelectSlotOrigUpdate);
 
+            On.Celeste.SaveLoadIcon.Routine += SaveLoadIconRoutine;
+
             On.Celeste.OuiAssistMode.Enter += OuiAssistModeEnter;
             ModOuiAssistModeInputRoutineHook = new ILHook(typeof(OuiAssistMode).GetMethod("InputRoutine", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetStateMachineTarget(), ModOuiAssistModeInputRoutine);
 
@@ -73,6 +75,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.OuiFileSelectSlot.OnDeleteSelected -= OuiFileSelectSlotOnDeleteSelected;
             ModOuiFileSelectSlotOrigUpdateHook.Dispose();
             ModOuiFileSelectSlotOrigUpdateHook = null;
+
+            On.Celeste.SaveLoadIcon.Routine -= SaveLoadIconRoutine;
 
             On.Celeste.OuiAssistMode.Enter -= OuiAssistModeEnter;
             ModOuiAssistModeInputRoutineHook.Dispose();
@@ -242,6 +246,14 @@ namespace NoMathExpectation.Celeste.Celestibility
             cursor.Emit<OuiFileSelectSlot>(OpCodes.Ldfld, "buttonIndex");
             cursor.Emit(OpCodes.Callvirt, typeof(List<OuiFileSelectSlot.Button>).GetMethod("get_Item"));
             cursor.EmitDelegate<Action<OuiFileSelectSlot.Button>>(UniversalSpeech.SpeechSay);
+        }
+
+
+        private static IEnumerator SaveLoadIconRoutine(On.Celeste.SaveLoadIcon.orig_Routine orig, SaveLoadIcon self)
+        {
+            "Celestibility_saving".DialogClean().SpeechSay();
+            yield return new SwapImmediately(orig(self));
+            "Celestibility_saved".DialogClean().SpeechSay();
         }
 
 
