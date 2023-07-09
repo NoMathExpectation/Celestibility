@@ -33,6 +33,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             Tag |= Tags.TransitionUpdate;
             Tag |= Tags.FrozenUpdate;
             Tag |= Tags.PauseUpdate;
+
+            Depth = -999999;
         }
 
         public void Toggle(bool? @bool = null)
