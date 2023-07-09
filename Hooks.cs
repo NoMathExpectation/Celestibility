@@ -47,6 +47,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             ModOuiAssistModeInputRoutineHook = new ILHook(typeof(OuiAssistMode).GetMethod("InputRoutine", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetStateMachineTarget(), ModOuiAssistModeInputRoutine);
 
             On.Celeste.BirdTutorialGui.Update += BirdTutorialGuiUpdate;
+
+            On.Celeste.Postcard.EaseIn += PostcardEaseIn;
         }
 
         internal static void Unhook()
@@ -83,6 +85,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             ModOuiAssistModeInputRoutineHook = null;
 
             On.Celeste.BirdTutorialGui.Update -= BirdTutorialGuiUpdate;
+
+            On.Celeste.Postcard.EaseIn -= PostcardEaseIn;
         }
 
 
@@ -331,6 +335,13 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
 
             data.Set("origOpen", self.Open);
+        }
+
+
+        private static IEnumerator PostcardEaseIn(On.Celeste.Postcard.orig_EaseIn orig, Postcard self)
+        {
+            yield return new SwapImmediately(orig(self));
+            DynamicData.For(self).Get<FancyText.Text>("text").SpeechSay();
         }
     }
 }

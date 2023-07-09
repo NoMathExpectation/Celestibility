@@ -214,9 +214,9 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
         }
 
-        public static void SpeechSay(this FancyText.Text text, int start = 0, int end = int.MaxValue, bool ignoreOff = false)
+        public static void SpeechSay(this FancyText.Text text, int start = 0, int end = int.MaxValue, bool interrupt = true)
         {
-            if (!(Enabled || ignoreOff) || text is null)
+            if (!Enabled || text is null)
             {
                 return;
             }
@@ -242,7 +242,7 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             string t = sb.ToString();
             LogUtil.Log($"FancyText Text: {t}", LogLevel.Verbose);
-            t.SpeechSay(true);
+            t.SpeechSay(interrupt);
         }
 
         public static void SpeechSay(this Entity entity, bool ignoreOff = false)
