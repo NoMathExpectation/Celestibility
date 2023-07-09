@@ -100,6 +100,19 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             }
         }
 
+        public static bool CollideCheckIgnoreCollidable(Entity a, Entity b)
+        {
+            if (a.Collider == null || b.Collider == null)
+            {
+                return false;
+            }
+            if (a != b)
+            {
+                return a.Collider.Collide(b);
+            }
+            return false;
+        }
+
         public void Narrate()
         {
             LogUtil.Log($"Access camera at {X}, {Y}", LogLevel.Verbose);
@@ -112,7 +125,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             EntityList entities = Scene.Entities;
             foreach (Entity entity in entities)
             {
-                if (entity.Visible && Collide.Check(this, entity))
+                bool origCollidable = entity.Collidable;
+                if (entity.Visible && CollideCheckIgnoreCollidable(this, entity))
                 {
                     entity.SpeechSay();
                 }
