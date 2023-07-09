@@ -43,6 +43,8 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             On.Celeste.OuiAssistMode.Enter += OuiAssistModeEnter;
             ModOuiAssistModeInputRoutineHook = new ILHook(typeof(OuiAssistMode).GetMethod("InputRoutine", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetStateMachineTarget(), ModOuiAssistModeInputRoutine);
+
+            On.Celeste.BirdTutorialGui.Update += BirdTutorialGuiUpdate;
         }
 
         internal static void Unhook()
@@ -75,6 +77,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.OuiAssistMode.Enter -= OuiAssistModeEnter;
             ModOuiAssistModeInputRoutineHook.Dispose();
             ModOuiAssistModeInputRoutineHook = null;
+
+            On.Celeste.BirdTutorialGui.Update -= BirdTutorialGuiUpdate;
         }
 
 
@@ -300,6 +304,21 @@ namespace NoMathExpectation.Celeste.Celestibility
                 cursor.Emit<OuiAssistMode>(OpCodes.Ldfld, "questionIndex");
                 cursor.EmitDelegate(UniversalSpeech.SpeechSayAssistUpdate);
             }
+        }
+
+
+        private static void BirdTutorialGuiUpdate(On.Celeste.BirdTutorialGui.orig_Update orig, BirdTutorialGui self)
+        {
+            orig(self);
+
+            DynamicData data = DynamicData.For(self);
+            bool? origOpen = data.Get<bool?>("origOpen");
+            if ((CelestibilityModule.Settings.Tutorial.Pressed || origOpen != self.Open) && self.Open)
+            {
+                self.SpeechSay();
+            }
+
+            data.Set("origOpen", self.Open);
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using Celeste;
 using Celeste.Mod;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Monocle;
 using MonoMod.Utils;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -153,7 +155,7 @@ namespace NoMathExpectation.Celeste.Celestibility
                 text += ", " + optionSubMenu.Menus[optionSubMenu.MenuIndex].Item1;
                 if (optionSubMenu.CurrentMenu.Count > 0)
                 {
-                    text += ", " + "Celestibility_optionSubMenu_press_hint".DialogClean();
+                    text += ", " + "Celestibility_OptionSubMenu_press_hint".DialogClean();
                 }
             }
 
@@ -417,6 +419,113 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
         }
 
+        public static string SpeechRender(this Binding binding)
+        {
+            if (binding is null)
+            {
+                return "";
+            }
 
+            if (Input.GuiInputController())
+            {
+                if (binding.Controller is not null)
+                {
+                    foreach (Buttons b in binding.Controller)
+                    {
+                        string key = $"Celestibility_speech_Buttons_{b}";
+                        if (Dialog.Has(key))
+                        {
+                            return key.DialogClean();
+                        }
+                        else
+                        {
+                            return b.ToString();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (binding.Keyboard is not null)
+                {
+                    foreach (Keys k in binding.Keyboard)
+                    {
+                        string key = $"Celestibility_speech_Keys_{k}";
+                        if (Dialog.Has(key))
+                        {
+                            return key.DialogClean();
+                        }
+                        else
+                        {
+                            return k.ToString();
+                        }
+                    }
+                }
+            }
+
+            return "Celestibility_Binding_unbound".DialogClean();
+        }
+
+        public static string SpeechRender(this Vector2 vec0)
+        {
+            Vector2 vec = new Vector2(vec0.X, vec0.Y);
+            if (SaveData.Instance is not null && SaveData.Instance.Assists.MirrorMode)
+            {
+                vec.X = -vec.X;
+            }
+
+            string xd = vec.X switch
+            {
+                < 0 => "left",
+                > 0 => "right",
+                _ => "zero"
+            };
+            string yd = vec.Y switch
+            {
+                < 0 => "up",
+                > 0 => "down",
+                _ => "zero"
+            };
+
+            return $"Celestibility_BirdTutorialGui_Vector2_{yd}_{xd}".DialogClean();
+        }
+
+        public static string SpeechRenderBirdTutorialGuiContent(this object obj)
+        {
+            LogUtil.Log($"BirdTutorialGui content: {obj}", LogLevel.Verbose);
+            return obj switch
+            {
+                null => "",
+                string str => str,
+                BirdTutorialGui.ButtonPrompt prompt => BirdTutorialGui.ButtonPromptToVirtualButton(prompt).Binding.SpeechRender(),
+                Vector2 direction => direction.SpeechRender(),
+                MTexture => "Celestibility_BirdTutorialGui_MTexture".DialogClean(),
+                _ => "Celestibility_BirdTutorialGui_unknown".DialogClean()
+            };
+        }
+
+        public static void SpeechSay(this BirdTutorialGui gui)
+        {
+            if (gui is null)
+            {
+                return;
+            }
+            LogUtil.Log($"BirdTutorialGui: {gui}", LogLevel.Verbose);
+
+            StringBuilder sb = new StringBuilder();
+            DynamicData data = DynamicData.For(gui);
+
+            object info = data.Get("info");
+            List<object> controls = data.Get<List<object>>("controls");
+
+            sb.Append(info.SpeechRenderBirdTutorialGuiContent());
+
+            foreach (object control in controls)
+            {
+                sb.Append(", ").Append(control.SpeechRenderBirdTutorialGuiContent());
+            }
+
+            sb.ToString().SpeechSay();
+        }
     }
 }
