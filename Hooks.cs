@@ -1,5 +1,6 @@
 ﻿using Celeste;
 using Celeste.Mod;
+using Celeste.Mod.Celestibility.Extensions;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -29,7 +30,14 @@ namespace NoMathExpectation.Celeste.Celestibility
             IL.Celeste.TextMenuExt.SubMenu.Update += ModTextMenuUpdate<TextMenuExt.SubMenu>;
             IL.Celeste.TextMenuExt.OptionSubMenu.Update += ModTextMenuUpdate<TextMenuExt.OptionSubMenu>;
 
-            On.Celeste.FancyText.Text.Draw += FancyTextTextDraw;
+            //On.Celeste.FancyText.Text.Draw += FancyTextTextDraw;
+            ModTextboxRunRoutineHook = new ILHook(typeof(Textbox).GetMethod("RunRoutine", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetStateMachineTarget(), ModTextboxRunRoutine);
+            ModMiniTextboxRoutineHook = new ILHook(typeof(MiniTextbox).GetMethod("Routine", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetStateMachineTarget(), ModMiniTextboxRoutine);
+            ModCS06_CampfireCutsceneHook = new ILHook(typeof(CS06_Campfire).GetMethod("Cutscene", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetStateMachineTarget(), ModCS06_CampfireCutscene);
+            ModIntroVignetteTextSequenceHook = new ILHook(typeof(IntroVignette).GetMethod("TextSequence", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetStateMachineTarget(), ModVignetteTextSequence<IntroVignette>);
+            ModCoreVignetteTextSequenceHook = new ILHook(typeof(CoreVignette).GetMethod("TextSequence", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetStateMachineTarget(), ModVignetteTextSequence<CoreVignette>);
+            On.Celeste.PrologueEndingText.Routine += PrologueEndingTextRoutine;
+            On.Celeste.CoreMessage.Update += CoreMessageUpdate;
 
             On.Celeste.Level.LoadLevel += LevelLoadLevel;
 
@@ -64,7 +72,19 @@ namespace NoMathExpectation.Celeste.Celestibility
             IL.Celeste.TextMenuExt.SubMenu.Update -= ModTextMenuUpdate<TextMenuExt.SubMenu>;
             IL.Celeste.TextMenuExt.OptionSubMenu.Update -= ModTextMenuUpdate<TextMenuExt.OptionSubMenu>;
 
-            On.Celeste.FancyText.Text.Draw -= FancyTextTextDraw;
+            //On.Celeste.FancyText.Text.Draw -= FancyTextTextDraw;
+            ModTextboxRunRoutineHook.Dispose();
+            ModTextboxRunRoutineHook = null;
+            ModMiniTextboxRoutineHook.Dispose();
+            ModMiniTextboxRoutineHook = null;
+            ModCS06_CampfireCutsceneHook.Dispose();
+            ModCS06_CampfireCutsceneHook = null;
+            ModIntroVignetteTextSequenceHook.Dispose();
+            ModIntroVignetteTextSequenceHook = null;
+            ModCoreVignetteTextSequenceHook.Dispose();
+            ModCoreVignetteTextSequenceHook = null;
+            On.Celeste.PrologueEndingText.Routine -= PrologueEndingTextRoutine;
+            On.Celeste.CoreMessage.Update -= CoreMessageUpdate;
 
             On.Celeste.Level.LoadLevel -= LevelLoadLevel;
 
@@ -154,6 +174,75 @@ namespace NoMathExpectation.Celeste.Celestibility
             orig(self, position, justify, scale, alpha, start, end);
         }
 
+        private static ILHook ModTextboxRunRoutineHook = null;
+        private static void ModTextboxRunRoutine(ILContext context)
+        {
+            ILCursor cursor = new ILCursor(context);
+
+            cursor.GotoNext(MoveType.After, inst => inst.MatchCallvirt<Textbox>("set_Page"));
+            cursor.Emit(OpCodes.Ldloc_1);
+            cursor.EmitDelegate(TextboxExtension.MarkNewPage);
+
+            cursor.GotoNext(MoveType.After, inst => inst.MatchStfld<Textbox>("lastChar"));
+            cursor.Emit(OpCodes.Ldloc_1);
+            cursor.EmitDelegate(TextboxExtension.CharEncountered);
+        }
+
+        private static ILHook ModMiniTextboxRoutineHook = null;
+        private static void ModMiniTextboxRoutine(ILContext context)
+        {
+            ILCursor cursor = new ILCursor(context);
+
+            cursor.GotoNext(MoveType.After, inst => inst.MatchStloc(3));
+            cursor.Emit(OpCodes.Ldloc_1);
+            cursor.EmitDelegate<Action<MiniTextbox>>(UniversalSpeech.SpeechSay);
+        }
+
+        private static ILHook ModCS06_CampfireCutsceneHook = null;
+        private static void ModCS06_CampfireCutscene(ILContext context)
+        {
+            ILCursor cursor = new ILCursor(context);
+
+            cursor.GotoNext(MoveType.Before, inst => inst.MatchLdstr("event:/ui/game/chatoptions_appear"));
+            cursor.InjectGetCurrentOption(true);
+
+            while (cursor.TryGotoNext(MoveType.After, inst => inst.MatchStfld<CS06_Campfire>("currentOptionIndex")))
+            {
+                cursor.InjectGetCurrentOption(false);
+            }
+        }
+
+        private static ILHook ModIntroVignetteTextSequenceHook = null;
+        private static ILHook ModCoreVignetteTextSequenceHook = null;
+        private static void ModVignetteTextSequence<T>(ILContext context)
+        {
+            ILCursor cursor = new ILCursor(context);
+
+            cursor.GotoNext(MoveType.After, inst => inst.MatchStfld<T>("textAlpha"));
+            cursor.Emit(OpCodes.Ldloc_1);
+            cursor.EmitDelegate<Action<T>>(UniversalSpeech.SpeechSayVignette);
+        }
+
+        private static IEnumerator PrologueEndingTextRoutine(On.Celeste.PrologueEndingText.orig_Routine orig, PrologueEndingText self, bool instant)
+        {
+            yield return new SwapImmediately(orig(self, instant));
+            DynamicData.For(self).Get<FancyText.Text>("text").SpeechSay();
+        }
+
+        private static void CoreMessageUpdate(On.Celeste.CoreMessage.orig_Update orig, CoreMessage self)
+        {
+            orig(self);
+
+            DynamicData data = DynamicData.For(self);
+            bool wasObvious = data.Get<bool?>("obvious") ?? false;
+            bool obvious = data.Get<float>("alpha") >= 0.2;
+            if (wasObvious != obvious && obvious)
+            {
+                data.Get<string>("text").SpeechSay();
+            }
+
+            data.Set("obvious", obvious);
+        }
 
         private static void LevelLoadLevel(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes playerIntro, bool isFromLoader)
         {
@@ -240,7 +329,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             cursor.Emit<OuiFileSelectSlot>(OpCodes.Ldfld, "buttons");
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit<OuiFileSelectSlot>(OpCodes.Ldfld, "buttonIndex");
-            cursor.Emit(OpCodes.Callvirt, typeof(List<OuiFileSelectSlot.Button>).GetMethod("get_Item"));
+            cursor.Emit<List<OuiFileSelectSlot.Button>>(OpCodes.Callvirt, "get_Item");
             cursor.EmitDelegate<Action<OuiFileSelectSlot.Button>>(UniversalSpeech.SpeechSay);
 
             cursor.GotoNext(MoveType.After, inst => inst.MatchStfld<OuiFileSelectSlot>("buttonIndex"));
@@ -248,7 +337,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             cursor.Emit<OuiFileSelectSlot>(OpCodes.Ldfld, "buttons");
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit<OuiFileSelectSlot>(OpCodes.Ldfld, "buttonIndex");
-            cursor.Emit(OpCodes.Callvirt, typeof(List<OuiFileSelectSlot.Button>).GetMethod("get_Item"));
+            cursor.Emit<List<OuiFileSelectSlot.Button>>(OpCodes.Callvirt, "get_Item");
             cursor.EmitDelegate<Action<OuiFileSelectSlot.Button>>(UniversalSpeech.SpeechSay);
         }
 

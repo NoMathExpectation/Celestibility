@@ -117,7 +117,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             return false;
         }
 
-        public static void SpeechSay(this Item item, bool update = false)
+        public static void SpeechSay(this TextMenu.Item item, bool update = false)
         {
             if (!Enabled || item is null)
             {
@@ -159,7 +159,7 @@ namespace NoMathExpectation.Celeste.Celestibility
                 }
             }
 
-            if (item is Setting bindSetting)
+            if (item is TextMenu.Setting bindSetting)
             {
                 Binding binding = bindSetting.Binding;
                 if (binding is not null)
@@ -320,6 +320,11 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         public static void SpeechSay(this Strawberry berry)
         {
+            if (!Enabled || berry is null)
+            {
+                return;
+            }
+
             bool collected = SaveData.Instance.CheckStrawberry(berry.ID);
             string text = Dialog.Clean($"Celestibility_speech_entity_text_Celeste_Strawberry_{(collected ? "" : "un")}collected");
             if (berry.Moon)
@@ -355,7 +360,7 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         public static void SpeechSay(this OuiFileSelectSlot slot)
         {
-            if (slot is null)
+            if (!Enabled || slot is null)
             {
                 return;
             }
@@ -377,11 +382,21 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         public static void SpeechSay(this OuiFileSelectSlot.Button button)
         {
+            if (!Enabled || button is null)
+            {
+                return;
+            }
+
             button.Label.SpeechSay(true);
         }
 
         public static void SpeechSay(this OuiAssistMode assist, int index = 0, int enable = 1)
         {
+            if (!Enabled || assist is null)
+            {
+                return;
+            }
+
             object pages = DynamicData.For(assist).Get("pages");
             int max = DynamicData.For(pages).Get<int>("Count");
             if (index == max)
@@ -409,6 +424,11 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         public static void SpeechSayAssistUpdate(int enable)
         {
+            if (!Enabled)
+            {
+                return;
+            }
+
             if (enable == 0)
             {
                 "ASSIST_YES".SpeechSay(true);
@@ -417,6 +437,11 @@ namespace NoMathExpectation.Celeste.Celestibility
             {
                 "ASSIST_NO".SpeechSay(true);
             }
+        }
+
+        public static string SpeechRender(this VirtualButton button)
+        {
+            return button.Binding.SpeechRender();
         }
 
         public static string SpeechRender(this Binding binding)
@@ -490,14 +515,14 @@ namespace NoMathExpectation.Celeste.Celestibility
             return $"Celestibility_BirdTutorialGui_Vector2_{yd}_{xd}".DialogClean();
         }
 
-        public static string SpeechRenderBirdTutorialGuiContent(this object obj)
+        private static string SpeechRenderBirdTutorialGuiContent(this object obj)
         {
             LogUtil.Log($"BirdTutorialGui content: {obj}", LogLevel.Verbose);
             return obj switch
             {
                 null => "",
                 string str => str,
-                BirdTutorialGui.ButtonPrompt prompt => BirdTutorialGui.ButtonPromptToVirtualButton(prompt).Binding.SpeechRender(),
+                BirdTutorialGui.ButtonPrompt prompt => BirdTutorialGui.ButtonPromptToVirtualButton(prompt).SpeechRender(),
                 Vector2 direction => direction.SpeechRender(),
                 MTexture => "Celestibility_BirdTutorialGui_MTexture".DialogClean(),
                 _ => "Celestibility_BirdTutorialGui_unknown".DialogClean()
@@ -506,11 +531,11 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         public static void SpeechSay(this BirdTutorialGui gui)
         {
-            if (gui is null)
+            LogUtil.Log($"BirdTutorialGui: {gui}", LogLevel.Verbose);
+            if (!Enabled || gui is null)
             {
                 return;
             }
-            LogUtil.Log($"BirdTutorialGui: {gui}", LogLevel.Verbose);
 
             StringBuilder sb = new StringBuilder();
             DynamicData data = DynamicData.For(gui);
@@ -526,6 +551,42 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
 
             sb.ToString().SpeechSay();
+        }
+
+        internal static void SpeechSayCS06_CampfireOption(this object option, bool interrupt)
+        {
+            if (!Enabled || option is null)
+            {
+                return;
+            }
+
+            object question = DynamicData.For(option).Get("Question");
+            FancyText.Text text = DynamicData.For(question).Get<FancyText.Text>("AskText");
+            text.SpeechSay(interrupt: interrupt);
+        }
+
+        public static void SpeechSay(this MiniTextbox box)
+        {
+            if (!Enabled)
+            {
+                return;
+            }
+
+            DynamicData.For(box).Get<FancyText.Text>("text").SpeechSay();
+        }
+
+        internal static void SpeechSayVignette<T>(this T intro)
+        {
+            if (!Enabled || intro is null)
+            {
+                return;
+            }
+
+            DynamicData data = DynamicData.For(intro);
+
+            FancyText.Text text = data.Get<FancyText.Text>("text");
+            int textStart = data.Get<int>("textStart");
+            text.SpeechSay(textStart);
         }
     }
 }

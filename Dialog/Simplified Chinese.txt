@@ -22,6 +22,8 @@ Celestibility_BirdTutorialGui_Vector2_down_right=右下
 Celestibility_BirdTutorialGui_MTexture=图片
 Celestibility_BirdTutorialGui_unknown=未知
 
+Celestibility_cutscene_select=使用{0}或{1}以选择一个选项
+
 Celestibility_speech_on=朗读功能已开启
 Celestibility_speech_off=朗读功能已关闭
 Celestibility_setting_speech=朗读文字
