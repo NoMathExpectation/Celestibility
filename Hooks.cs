@@ -59,6 +59,9 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.Postcard.EaseIn += PostcardEaseIn;
 
             ModTalkComponentUISet_HighlightedHook = new ILHook(typeof(TalkComponent.TalkComponentUI).GetMethod("set_Highlighted"), ModTalkComponentUISet_Highlighted);
+
+            //HeartGemExtension.Hook();
+            On.Celeste.Poem.Update += PoemUpdate;
         }
 
         internal static void Unhook()
@@ -112,6 +115,9 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             ModTalkComponentUISet_HighlightedHook.Dispose();
             ModTalkComponentUISet_HighlightedHook = null;
+
+            //HeartGemExtension.Unhook();
+            On.Celeste.Poem.Update -= PoemUpdate;
         }
 
 
@@ -446,6 +452,21 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             cursor.GotoNext(MoveType.After, inst => inst.MatchPop());
             cursor.EmitDelegate(TalkComponentExtension.HintInteract);
+        }
+
+
+        private static void PoemUpdate(On.Celeste.Poem.orig_Update orig, Poem self)
+        {
+            orig(self);
+
+            DynamicData data = DynamicData.For(self);
+            float origTextAlpha = data.Get<float?>("origTextAlpha") ?? 0.0f;
+            if (origTextAlpha < self.TextAlpha && self.TextAlpha >= 0.8)
+            {
+                self.SpeechSay();
+            }
+
+            data.Set("origTextAlpha", self.TextAlpha);
         }
     }
 }

@@ -567,7 +567,7 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         public static void SpeechSay(this MiniTextbox box)
         {
-            if (!Enabled)
+            if (!Enabled || box is null)
             {
                 return;
             }
@@ -587,6 +587,15 @@ namespace NoMathExpectation.Celeste.Celestibility
             FancyText.Text text = data.Get<FancyText.Text>("text");
             int textStart = data.Get<int>("textStart");
             text.SpeechSay(textStart);
+        }
+
+        public static void SpeechSay(this Poem poem) {
+            if (!Enabled || poem is null) {
+                return;
+            }
+
+            DynamicData data = DynamicData.For(poem);
+            data.Get<string>("text").SpeechSay(true);
         }
     }
 }
