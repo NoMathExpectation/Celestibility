@@ -62,6 +62,7 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             //HeartGemExtension.Hook();
             On.Celeste.Poem.Update += PoemUpdate;
+            On.Celeste.MemorialText.Update += MemorialTextUpdate;
         }
 
         internal static void Unhook()
@@ -118,6 +119,7 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             //HeartGemExtension.Unhook();
             On.Celeste.Poem.Update -= PoemUpdate;
+            On.Celeste.MemorialText.Update -= MemorialTextUpdate;
         }
 
 
@@ -461,12 +463,27 @@ namespace NoMathExpectation.Celeste.Celestibility
 
             DynamicData data = DynamicData.For(self);
             float origTextAlpha = data.Get<float?>("origTextAlpha") ?? 0.0f;
-            if (origTextAlpha < self.TextAlpha && self.TextAlpha >= 0.8)
+            if (origTextAlpha < self.TextAlpha && self.TextAlpha >= 0.8f)
             {
                 self.SpeechSay();
             }
 
             data.Set("origTextAlpha", self.TextAlpha);
+        }
+
+        private static void MemorialTextUpdate(On.Celeste.MemorialText.orig_Update orig, MemorialText self)
+        {
+            orig(self);
+
+            DynamicData data = DynamicData.For(self);
+            float origAlpha = data.Get<float?>("origAlpha") ?? 0.0f;
+            float alpha = data.Get<float>("alpha");
+            if (origAlpha < alpha && alpha >= 1.0f)
+            {
+                self.SpeechSay();
+            }
+
+            data.Set("origAlpha", alpha);
         }
     }
 }

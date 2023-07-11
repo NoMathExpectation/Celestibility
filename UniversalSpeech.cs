@@ -6,6 +6,7 @@ using Monocle;
 using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -589,13 +590,44 @@ namespace NoMathExpectation.Celeste.Celestibility
             text.SpeechSay(textStart);
         }
 
-        public static void SpeechSay(this Poem poem) {
-            if (!Enabled || poem is null) {
+        public static void SpeechSay(this Poem poem)
+        {
+            if (!Enabled || poem is null)
+            {
                 return;
             }
 
             DynamicData data = DynamicData.For(poem);
             data.Get<string>("text").SpeechSay(true);
+        }
+
+        public static void SpeechSay(this MemorialText text)
+        {
+            if (!Enabled || text is null)
+            {
+                return;
+            }
+
+            DynamicData data = DynamicData.For(text);
+            string message = data.Get<string>("message");
+
+            if (!text.Dreamy)
+            {
+                message.SpeechSay(true);
+                return;
+            }
+
+            List<char> chars = message.ToList();
+            Calc.PushRandom();
+            chars.Shuffle();
+            Calc.PopRandom();
+
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in chars)
+            {
+                sb.Append(c);
+            }
+            sb.ToString().SpeechSay(true);
         }
     }
 }
