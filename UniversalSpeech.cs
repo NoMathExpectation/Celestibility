@@ -327,7 +327,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
 
             bool collected = SaveData.Instance.CheckStrawberry(berry.ID);
-            string text = Dialog.Clean($"Celestibility_speech_entity_text_Celeste_Strawberry_{(collected ? "" : "un")}collected");
+            string text = berry.Winged ? Dialog.Clean("Celestibility_speech_entity_text_Celeste_Strawberry_winged") : "";
+            text += " " + Dialog.Clean($"Celestibility_speech_entity_text_Celeste_Strawberry_{(collected ? "" : "un")}collected");
             if (berry.Moon)
             {
                 text += " " + Dialog.Clean("Celestibility_speech_entity_text_Celeste_Strawberry_moon");
