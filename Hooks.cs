@@ -57,6 +57,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.BirdTutorialGui.Update += BirdTutorialGuiUpdate;
 
             On.Celeste.Postcard.EaseIn += PostcardEaseIn;
+
+            ModTalkComponentUISet_HighlightedHook = new ILHook(typeof(TalkComponent.TalkComponentUI).GetMethod("set_Highlighted"), ModTalkComponentUISet_Highlighted);
         }
 
         internal static void Unhook()
@@ -107,6 +109,9 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.BirdTutorialGui.Update -= BirdTutorialGuiUpdate;
 
             On.Celeste.Postcard.EaseIn -= PostcardEaseIn;
+
+            ModTalkComponentUISet_HighlightedHook.Dispose();
+            ModTalkComponentUISet_HighlightedHook = null;
         }
 
 
@@ -431,6 +436,16 @@ namespace NoMathExpectation.Celeste.Celestibility
         {
             yield return new SwapImmediately(orig(self));
             DynamicData.For(self).Get<FancyText.Text>("text").SpeechSay();
+        }
+
+
+        private static ILHook ModTalkComponentUISet_HighlightedHook = null;
+        private static void ModTalkComponentUISet_Highlighted(ILContext context)
+        {
+            ILCursor cursor = new ILCursor(context);
+
+            cursor.GotoNext(MoveType.After, inst => inst.MatchPop());
+            cursor.EmitDelegate(TalkComponentExtension.HintInteract);
         }
     }
 }
