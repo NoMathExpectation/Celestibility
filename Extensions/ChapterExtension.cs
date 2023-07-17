@@ -30,12 +30,19 @@ namespace Celeste.Mod.Celestibility.Extensions
                 text += ", " + GetCurrentLevelSetName();
             }
 
-            if (!GetCurrentAreaData().Interlude_Safe)
+            if (SaveData.Instance.AssistMode && key.ID >= SaveData.Instance.UnlockedAreas_Safe + 1)
             {
-                text += ", " + key.GetChapter();
+                text += ", " + "ASSIST_SKIP".DialogClean();
             }
+            else
+            {
+                if (!GetCurrentAreaData().Interlude_Safe)
+                {
+                    text += ", " + key.GetChapter();
+                }
 
-            text += ", " + key.GetChapterName();
+                text += ", " + key.GetChapterName();
+            }
 
             text.SpeechSay(true);
         }
@@ -88,9 +95,6 @@ namespace Celeste.Mod.Celestibility.Extensions
         {
             yield return new SwapImmediately(orig(self, from));
 
-            DynamicData data = DynamicData.For(self);
-            data.Set("origArea", data.Get<int>("area"));
-
             if (!UniversalSpeech.Enabled)
             {
                 yield break;
@@ -115,12 +119,18 @@ namespace Celeste.Mod.Celestibility.Extensions
             int origArea = data.Get<int?>("origArea") ?? data.Get<int>("area");
             int area = data.Get<int>("area");
 
-            if (origArea != area)
+            DynamicData iconListData = DynamicData.For(data.Get("icons"));
+            OuiChapterSelectIcon currentIcon = iconListData.Invoke<OuiChapterSelectIcon>("get_Item", area);
+            bool origCurrentAssistModeUnlockable = data.Get<bool?>("origCurrentAssistModeUnlockable") ?? currentIcon.AssistModeUnlockable;
+            bool currentAssistModeUnlockable = currentIcon.AssistModeUnlockable;
+
+            if (origArea != area || origCurrentAssistModeUnlockable != currentAssistModeUnlockable)
             {
                 SpeechSayCurrentChapter();
             }
 
             data.Set("origArea", area);
+            data.Set("origCurrentAssistModeUnlockable", currentAssistModeUnlockable);
         }
 
         public static IEnumerator OuiChapterPanelEnter(On.Celeste.OuiChapterPanel.orig_Enter orig, OuiChapterPanel self, Oui from)
@@ -128,8 +138,6 @@ namespace Celeste.Mod.Celestibility.Extensions
             yield return new SwapImmediately(orig(self, from));
 
             DynamicData data = DynamicData.For(self);
-            data.Set("origSelectingMode", data.Get<bool>("selectingMode"));
-            data.Set("origOption", data.Get<int>("option"));
 
             if (!UniversalSpeech.Enabled || data.Get<bool>("instantClose"))
             {
