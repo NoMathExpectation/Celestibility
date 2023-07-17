@@ -63,6 +63,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             //HeartGemExtension.Hook();
             On.Celeste.Poem.Update += PoemUpdate;
             On.Celeste.MemorialText.Update += MemorialTextUpdate;
+
+            ChapterExtension.Hook();
         }
 
         internal static void Unhook()
@@ -120,6 +122,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             //HeartGemExtension.Unhook();
             On.Celeste.Poem.Update -= PoemUpdate;
             On.Celeste.MemorialText.Update -= MemorialTextUpdate;
+
+            ChapterExtension.Unhook();
         }
 
 
