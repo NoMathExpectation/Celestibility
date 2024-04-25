@@ -47,7 +47,22 @@ namespace Celeste.Mod.Celestibility.Extensions
             text.SpeechSay(true);
         }
 
-        public static void SpeechSay(this OuiChapterPanel panel)
+        public static void SpeechSay(this OuiChapterPanel panel, bool name = false)
+        {
+            if (!UniversalSpeech.Enabled || panel is null)
+            {
+                return;
+            }
+
+            if (name)
+            {
+                SpeechSayCurrentChapter();
+            }
+
+            panel.SpeechSayOuiChapterPanelOption(!name);
+        }
+
+        public static void SpeechSayOuiChapterPanelOption(this OuiChapterPanel panel, bool interrupt = true)
         {
             if (!UniversalSpeech.Enabled || panel is null)
             {
@@ -59,10 +74,10 @@ namespace Celeste.Mod.Celestibility.Extensions
             DynamicData optionsListData = DynamicData.For(data.Get("options"));
             int optionSelecting = data.Get<int>("option");
             object option = optionsListData.Invoke("get_Item", optionSelecting);
-            option.SpeechSayOuiChapterPanelOption();
+            option.SpeechSayOuiChapterPanelOption(interrupt);
         }
 
-        public static void SpeechSayOuiChapterPanelOption(this object option)
+        public static void SpeechSayOuiChapterPanelOption(this object option, bool interrupt = true)
         {
             if (!UniversalSpeech.Enabled || option is null)
             {
@@ -70,7 +85,7 @@ namespace Celeste.Mod.Celestibility.Extensions
             }
 
             DynamicData data = DynamicData.For(option);
-            data.Get<string>("Label").SpeechSay(true);
+            data.Get<string>("Label").SpeechSay(interrupt);
         }
 
         public static void Hook()
@@ -99,6 +114,14 @@ namespace Celeste.Mod.Celestibility.Extensions
             {
                 yield break;
             }
+
+            DynamicData data = DynamicData.For(self);
+            DynamicData iconListData = DynamicData.For(data.Get("icons"));
+            int area = data.Get<int>("area");
+            data.Set("origArea", area);
+
+            OuiChapterSelectIcon currentIcon = iconListData.Invoke<OuiChapterSelectIcon>("get_Item", area);
+            data.Set("origCurrentAssistModeUnlockable", currentIcon.AssistModeUnlockable);
 
             if (from is not OuiChapterPanel)
             {
@@ -144,7 +167,7 @@ namespace Celeste.Mod.Celestibility.Extensions
                 yield break;
             }
 
-            self.SpeechSay();
+            self.SpeechSay(from is not OuiChapterSelect);
         }
 
         public static void OuiChapterPanelUpdate(On.Celeste.OuiChapterPanel.orig_Update orig, OuiChapterPanel self)
@@ -164,7 +187,7 @@ namespace Celeste.Mod.Celestibility.Extensions
 
             if (origSelectingMode != selectingMode || origOption != option)
             {
-                self.SpeechSay();
+                self.SpeechSayOuiChapterPanelOption();
             }
 
             data.Set("origSelectingMode", selectingMode);
