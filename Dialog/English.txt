@@ -1,7 +1,7 @@
 Celestibility_loaded=Celestibility mod loaded
 Celestibility_unloaded=Celestibility mod unloaded
 
-Celestibility_speech_fileslot={0}, play time: {1}£¬deaths: {2}, strawberrys: {3}
+Celestibility_speech_fileslot={0}, play time: {1}ï¿½ï¿½deaths: {2}, strawberrys: {3}
 
 Celestibility_saving=Saving Progress
 Celestibility_saved=Progress Saved
@@ -26,12 +26,18 @@ Celestibility_cutscene_select=Use {0} or {1} to choose an option
 
 Celestibility_interact_hint=Press {0} to interact.
 
+Celestibility_SpeechProvider_UniversalSpeech=UniversalSpeech
+Celestibility_SpeechProvider_NVDA=NVDA
+Celestibility_SpeechProvider_ZDSR=ZDSR
+
 Celestibility_speech_on=Narrate on
 Celestibility_speech_off=Narrate off
 Celestibility_setting_speech=Narrate Texts
 Celestibility_setting_bind_speech=Toggle Narrate
 Celestibility_setting_speech_test_text=Test Narrate Text
 Celestibility_setting_speech_test_play=Test Narrate
+Celestibility_setting_speech_provider=Speech Provider
+Celestibility_setting_speech_provider_none=No Speech Provider
 
 Celestibility_camera_on=Camera on
 Celestibility_camera_off=Camera off

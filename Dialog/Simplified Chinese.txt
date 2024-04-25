@@ -26,12 +26,18 @@ Celestibility_cutscene_select=使用{0}或{1}以选择一个选项
 
 Celestibility_interact_hint=按下{0}以交互
 
+Celestibility_SpeechProvider_UniversalSpeech=UniversalSpeech
+Celestibility_SpeechProvider_NVDA=NVDA
+Celestibility_SpeechProvider_ZDSR=争渡
+
 Celestibility_speech_on=朗读功能已开启
 Celestibility_speech_off=朗读功能已关闭
 Celestibility_setting_speech=朗读文字
 Celestibility_setting_bind_speech=打开/关闭朗读
 Celestibility_setting_speech_test_text=测试文字
 Celestibility_setting_speech_test_play=朗读测试文字
+Celestibility_setting_speech_provider=朗读引擎
+Celestibility_setting_speech_provider_none=没有朗读引擎
 
 Celestibility_camera_on=照相机已开启
 Celestibility_camera_off=照相机已关闭

@@ -10,7 +10,7 @@ namespace Celeste.Mod.Celestibility.Extensions
 
         public static AreaData GetCurrentAreaData() => AreaData.Areas[GetCurrentAreaKey().ID];
 
-        public static string GetCurrentLevelSetName() => DialogExt.CleanLevelSet(SaveData.Instance?.GetLevelSet() ?? "Celeste");
+        public static string GetCurrentLevelSetName() => Dialog.CleanLevelSet(SaveData.Instance?.LevelSet ?? "Celeste");
 
         public static string GetChapter(this OuiChapterPanel panel) => DynamicData.For(panel).Get<string>("chapter");
 

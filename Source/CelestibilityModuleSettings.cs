@@ -3,6 +3,7 @@ using Celeste.Mod;
 using Microsoft.Xna.Framework.Input;
 using Monocle;
 using NoMathExpectation.Celeste.Celestibility.Entities;
+using NoMathExpectation.Celeste.Celestibility.Speech;
 
 namespace NoMathExpectation.Celeste.Celestibility
 {
@@ -48,6 +49,37 @@ namespace NoMathExpectation.Celeste.Celestibility
         public static void ToggleSpeech()
         {
             ToggleSpeech(null);
+        }
+
+        public const string speechProviderNone = "Celestibility_setting_speech_provider_none";
+
+        public string SpeechProvider { get; set; } = speechProviderNone;
+
+        public void CreateSpeechProviderEntry(TextMenu menu, bool inGame)
+        {
+            TextMenu.Option<string> entry = new("Celestibility_setting_speech_provider".DialogClean());
+            entry.Change(value =>
+            {
+                SpeechProvider = value;
+                SpeechEngine.SetCurrent(value);
+            });
+            menu.Add(entry);
+
+            var providers = SpeechEngine.GetProviders();
+            if (providers.Count <= 0)
+            {
+                SpeechEngine.SetCurrent(speechProviderNone);
+                entry.Add(speechProviderNone.DialogClean(), null, true);
+                return;
+            }
+
+            SpeechProvider = SpeechEngine.TrySetCurrentDefault();
+
+            foreach (var (name, _) in providers)
+            {
+                entry.Add(name.DialogClean(), name, SpeechProvider == name);
+            }
+            return;
         }
 
         [SettingName("Celestibility_setting_camera")]

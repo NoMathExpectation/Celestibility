@@ -22,6 +22,8 @@ namespace NoMathExpectation.Celeste.Celestibility
         {
             LogUtil.Log("Hooking.");
 
+            On.Celeste.OuiTitleScreen.Enter += OuiTitleScreenEnter;
+
             On.Celeste.TextMenu.Update += TextMenuUpdate;
             On.Celeste.TextMenu.MoveSelection += TextMenuMoveSelection;
             On.Celeste.TextMenuExt.SubMenu.MoveSelection += SubMenuMoveSelection;
@@ -70,6 +72,8 @@ namespace NoMathExpectation.Celeste.Celestibility
         internal static void Unhook()
         {
             LogUtil.Log("Unhooking.");
+
+            On.Celeste.OuiTitleScreen.Enter -= OuiTitleScreenEnter;
 
             On.Celeste.TextMenu.Update -= TextMenuUpdate;
             On.Celeste.TextMenu.MoveSelection -= TextMenuMoveSelection;
@@ -124,6 +128,11 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.MemorialText.Update -= MemorialTextUpdate;
 
             ChapterExtension.Unhook();
+        }
+
+        private static IEnumerator OuiTitleScreenEnter(On.Celeste.OuiTitleScreen.orig_Enter orig, OuiTitleScreen self, Oui from)
+        {
+            yield return new SwapImmediately(orig(self, from));
         }
 
 
@@ -330,7 +339,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             cursor.EmitReference(true);
             cursor.EmitReference<string>(null);
             cursor.EmitReference(false);
-            cursor.EmitDelegate<Func<string, bool, string, bool, int>>(UniversalSpeech.SpeechSay);
+            cursor.EmitDelegate<Func<string, bool, string, bool, bool>>(UniversalSpeech.SpeechSay);
             cursor.Emit(OpCodes.Pop);
 
             cursor.GotoNext(MoveType.After, inst => inst.MatchStfld<OuiFileSelectSlot>("deleteIndex"));
@@ -338,7 +347,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             cursor.EmitReference(true);
             cursor.EmitReference<string>(null);
             cursor.EmitReference(false);
-            cursor.EmitDelegate<Func<string, bool, string, bool, int>>(UniversalSpeech.SpeechSay);
+            cursor.EmitDelegate<Func<string, bool, string, bool, bool>>(UniversalSpeech.SpeechSay);
             cursor.Emit(OpCodes.Pop);
 
             cursor.GotoNext(MoveType.After, inst => inst.MatchStfld<OuiFileSelectSlot>("buttonIndex"));

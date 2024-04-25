@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod;
+using NoMathExpectation.Celeste.Celestibility.Speech;
 using System;
 using System.IO;
 
@@ -34,7 +35,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             {
                 Directory.CreateDirectory(cachePath);
             }
-            string[] dlls = { "dolapi.dll", "jfwapi.dll", "nvdaControllerClient.dll", "SAAPI32.dll", "UniversalSpeech.dll", "ZDSRAPI.dll" };
+            string[] dlls = ["dolapi.dll", "jfwapi.dll", "nvdaControllerClient.dll", "SAAPI32.dll", "UniversalSpeech.dll", "ZDSRAPI_x64.dll"];
             foreach (string dll in dlls)
             {
                 try
@@ -72,11 +73,18 @@ namespace NoMathExpectation.Celeste.Celestibility
         public override void Load()
         {
             ExtractDlls();
+            SpeechEngine.Init();
 
             Hooks.Hook();
 
             "Celestibility_loaded".SpeechSay(def: "Celestibility mod loaded.");
             LogUtil.Log("Mod loaded.");
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            Settings.SpeechProvider = SpeechEngine.TrySetCurrentDefault();
         }
 
         public override void Unload()

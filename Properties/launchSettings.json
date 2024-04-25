@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "Celestibility": {
-      "commandName": "Project",
-      "remoteDebugEnabled": true,
-      "remoteDebugMachine": "http://localhost:38038/"
-    }
-  }
-}
