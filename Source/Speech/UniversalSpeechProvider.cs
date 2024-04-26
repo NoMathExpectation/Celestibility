@@ -5,8 +5,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
     internal class UniversalSpeechProvider : ISpeechProvider
     {
         public string Name => "Celestibility_SpeechProvider_UniversalSpeech";
-
-        private const string dll = "Mods/Cache/Celestibility/nativebin/UniversalSpeech";
+        
+        private const string dll = "UniversalSpeech";
 
         public void Say(string text, bool interrupt = false)
         {

@@ -6,7 +6,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
     {
         string ISpeechProvider.Name => "Celestibility_SpeechProvider_BoyCtrl";
 
-        private const string dll = "Mods/Cache/Celestibility/nativebin/BoyCtrl-x64";
+        private const string dll = "BoyCtrl";
 
         public void Say(string text, bool interrupt = false)
         {
@@ -14,7 +14,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
             {
                 BoyCtrlStopSpeaking(true);
             }
-            BoyCtrlSpeakU8(text, true, !interrupt, false, (value) => { });
+            BoyCtrlSpeakAnsi(text, true, !interrupt, false, (value) => { });
         }
 
         public void Stop()
@@ -24,7 +24,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
 
         public BoyCtrlSpeechProvider()
         {
-            BoyCtrlInitializeU8(null);
+            BoyCtrlInitializeAnsi(null);
         }
 
         ~BoyCtrlSpeechProvider()
@@ -45,12 +45,12 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
         }
 
         [DllImport(dll, CharSet = CharSet.Auto)]
-        private static extern int BoyCtrlInitializeU8(string logPath);
+        private static extern int BoyCtrlInitializeAnsi(string logPath);
 
         private delegate void BoyCtrlSpeakCompleteFunc(int reason);
 
         [DllImport(dll, CharSet = CharSet.Auto)]
-        private static extern int BoyCtrlSpeakU8(string text, bool withSlave, bool append, bool allowBreak, [MarshalAs(UnmanagedType.FunctionPtr)] BoyCtrlSpeakCompleteFunc onCompletion);
+        private static extern int BoyCtrlSpeakAnsi(string text, bool withSlave, bool append, bool allowBreak, [MarshalAs(UnmanagedType.FunctionPtr)] BoyCtrlSpeakCompleteFunc onCompletion);
 
         [DllImport(dll, CharSet = CharSet.Auto)]
         private static extern int BoyCtrlStopSpeaking(bool withSlave);

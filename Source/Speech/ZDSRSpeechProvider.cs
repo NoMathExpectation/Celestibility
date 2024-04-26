@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Celeste.Mod;
+using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NoMathExpectation.Celeste.Celestibility.Speech
 {
@@ -11,9 +8,26 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
     {
         public string Name => "Celestibility_SpeechProvider_ZDSR";
 
-        private const string dll = "Mods/Cache/Celestibility/nativebin/ZDSRAPI_x64";
+        private const string dll = "ZDSRAPI";
 
-        public ZDSRSpeechProvider() {
+        public ZDSRSpeechProvider()
+        {
+            string zdsrini = "ZDSRAPI.ini";
+            if (!File.Exists(zdsrini))
+            {
+                try
+                {
+                    ModAsset asset = Everest.Content.Get($"{zdsrini}");
+                    using Stream stream = asset.Stream;
+                    using Stream destination = File.OpenWrite(zdsrini);
+                    stream.CopyTo(destination);
+                }
+                catch (IOException)
+                {
+                    LogUtil.Log($"Failed to copy {zdsrini} to main folder.", LogLevel.Warn);
+                }
+            }
+
             InitTTS(1, "Celestibility", false);
         }
 

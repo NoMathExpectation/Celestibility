@@ -6,7 +6,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
     {
         string ISpeechProvider.Name => "Celestibility_SpeechProvider_NVDA";
 
-        private const string dll = "Mods/Cache/Celestibility/nativebin/nvdaControllerClient";
+        private const string dll = "nvdaControllerClient";
 
         public void Say(string text, bool interrupt = false)
         {

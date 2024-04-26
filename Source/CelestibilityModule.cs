@@ -1,7 +1,6 @@
 ﻿using Celeste.Mod;
 using NoMathExpectation.Celeste.Celestibility.Speech;
 using System;
-using System.IO;
 
 namespace NoMathExpectation.Celeste.Celestibility
 {
@@ -27,52 +26,9 @@ namespace NoMathExpectation.Celeste.Celestibility
 #endif
         }
 
-        private static void ExtractDlls()
-        {
-            LogUtil.Log("Extracting dlls...");
-            string cachePath = "Mods/Cache/Celestibility/nativebin";
-            if (!Directory.Exists(cachePath))
-            {
-                Directory.CreateDirectory(cachePath);
-            }
-            string[] dlls = ["dolapi.dll", "jfwapi.dll", "nvdaControllerClient.dll", "SAAPI32.dll", "UniversalSpeech.dll", "ZDSRAPI_x64.dll", "BoyCtrl-x64.dll"];
-            foreach (string dll in dlls)
-            {
-                try
-                {
-                    ModAsset asset = Everest.Content.Get($"nativebin/{dll}");
-                    using Stream stream = asset.Stream;
-                    using Stream destination = File.OpenWrite(Path.Combine(cachePath, dll));
-                    stream.CopyTo(destination);
-                }
-                catch (IOException)
-                {
-                    LogUtil.Log("Dlls are currently at use, skipping.", LogLevel.Warn);
-                    break;
-                }
-            }
-
-            string zdsrini = "ZDSRAPI.ini";
-            if (File.Exists(zdsrini))
-            {
-                return;
-            }
-            try
-            {
-                ModAsset asset = Everest.Content.Get($"nativebin/{zdsrini}");
-                using Stream stream = asset.Stream;
-                using Stream destination = File.OpenWrite(zdsrini);
-                stream.CopyTo(destination);
-            }
-            catch (IOException)
-            {
-                LogUtil.Log($"Failed to copy {zdsrini} to main menu.", LogLevel.Warn);
-            }
-        }
-
         public override void Load()
         {
-            ExtractDlls();
+            // ExtractDlls();
             SpeechEngine.Init();
 
             Hooks.Hook();
