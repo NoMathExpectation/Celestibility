@@ -29,6 +29,7 @@ Celestibility_interact_hint=Press {0} to interact.
 Celestibility_SpeechProvider_UniversalSpeech=UniversalSpeech
 Celestibility_SpeechProvider_NVDA=NVDA
 Celestibility_SpeechProvider_ZDSR=ZDSR
+Celestibility_SpeechProvider_BoyCtrl=BoyCtrl
 
 Celestibility_speech_on=Narrate on
 Celestibility_speech_off=Narrate off

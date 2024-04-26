@@ -35,7 +35,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             {
                 Directory.CreateDirectory(cachePath);
             }
-            string[] dlls = ["dolapi.dll", "jfwapi.dll", "nvdaControllerClient.dll", "SAAPI32.dll", "UniversalSpeech.dll", "ZDSRAPI_x64.dll"];
+            string[] dlls = ["dolapi.dll", "jfwapi.dll", "nvdaControllerClient.dll", "SAAPI32.dll", "UniversalSpeech.dll", "ZDSRAPI_x64.dll", "BoyCtrl-x64.dll"];
             foreach (string dll in dlls)
             {
                 try

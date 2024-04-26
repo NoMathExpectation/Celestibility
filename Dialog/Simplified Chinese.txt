@@ -29,6 +29,7 @@ Celestibility_interact_hint=按下{0}以交互
 Celestibility_SpeechProvider_UniversalSpeech=UniversalSpeech
 Celestibility_SpeechProvider_NVDA=NVDA
 Celestibility_SpeechProvider_ZDSR=争渡
+Celestibility_SpeechProvider_BoyCtrl=保益
 
 Celestibility_speech_on=朗读功能已开启
 Celestibility_speech_off=朗读功能已关闭

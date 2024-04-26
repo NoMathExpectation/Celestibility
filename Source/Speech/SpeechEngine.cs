@@ -75,6 +75,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
             RegisterProvider(new UniversalSpeechProvider());
             RegisterProvider(new NVDASpeechProvider());
             RegisterProvider(new ZDSRSpeechProvider());
+            RegisterProvider(new BoyCtrlSpeechProvider());
             CurrentName = CelestibilityModule.Settings.SpeechProvider;
         }
     }

@@ -105,8 +105,11 @@ namespace NoMathExpectation.Celeste.Celestibility
             if (item.IsOption())
             {
                 DynamicData values = DynamicData.For(data.Get("Values"));
-                int index = data.Get<int>("Index");
-                text += ", " + DynamicData.For(values.Invoke("get_Item", index)).Get<string>("Item1");
+                int count = values.Get<int>("Count");
+                if (count > 0) {
+                    int index = data.Get<int>("Index");
+                    text += ", " + DynamicData.For(values.Invoke("get_Item", index)).Get<string>("Item1");
+                }
             }
 
             if (item is TextMenuExt.OptionSubMenu optionSubMenu)
