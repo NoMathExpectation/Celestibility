@@ -3,6 +3,7 @@ using Celeste.Mod;
 using Celeste.Mod.Celestibility.Extensions;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
+using Monocle;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
@@ -42,6 +43,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.CoreMessage.Update += CoreMessageUpdate;
 
             On.Celeste.Level.LoadLevel += LevelLoadLevel;
+
+            On.Celeste.AutoSavingNotice.Update += AutoSavingNoticeUpdate;
 
             On.Celeste.OuiMainMenu.Enter += OuiMainMenuEnter;
             ModMenuButtonSetSelectedHook = new ILHook(typeof(MenuButton).GetMethod("set_Selected"), ModMenuButtonSetSelected);
@@ -99,6 +102,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.CoreMessage.Update -= CoreMessageUpdate;
 
             On.Celeste.Level.LoadLevel -= LevelLoadLevel;
+
+            On.Celeste.AutoSavingNotice.Update -= AutoSavingNoticeUpdate;
 
             On.Celeste.OuiMainMenu.Enter -= OuiMainMenuEnter;
             ModMenuButtonSetSelectedHook.Dispose();
@@ -280,6 +285,17 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
         }
 
+        private static void AutoSavingNoticeUpdate(On.Celeste.AutoSavingNotice.orig_Update orig, AutoSavingNotice self, Scene scene)
+        {
+            DynamicData data = DynamicData.For(self);
+            float startTimer = data.Get<float>("startTimer");
+            if (startTimer > 0f && startTimer - Engine.DeltaTime <= 0f)
+            {
+                self.SpeechSay();
+            }
+
+            orig(self, scene);
+        }
 
         private static IEnumerator OuiMainMenuEnter(On.Celeste.OuiMainMenu.orig_Enter orig, OuiMainMenu self, Oui from)
         {

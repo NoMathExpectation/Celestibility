@@ -591,5 +591,10 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
             sb.ToString().SpeechSay(true);
         }
+
+        public static void SpeechSay(this AutoSavingNotice notice) {
+            "autosaving_title_PC".SpeechSay();
+            "autosaving_desc_PC".SpeechSay();
+        }
     }
 }
