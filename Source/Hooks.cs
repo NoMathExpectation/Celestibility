@@ -70,6 +70,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.MemorialText.Update += MemorialTextUpdate;
 
             ChapterExtension.Hook();
+
+            CollisionRadar.Hook();
         }
 
         internal static void Unhook()
@@ -133,6 +135,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.MemorialText.Update -= MemorialTextUpdate;
 
             ChapterExtension.Unhook();
+
+            CollisionRadar.Unhook();
         }
 
         private static IEnumerator OuiTitleScreenEnter(On.Celeste.OuiTitleScreen.orig_Enter orig, OuiTitleScreen self, Oui from)
