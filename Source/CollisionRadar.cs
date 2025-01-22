@@ -2,6 +2,8 @@
 using Celeste.Mod;
 using Microsoft.Xna.Framework;
 using Monocle;
+using NoMathExpectation.Celeste.Celestibility.Extensions;
+using System.Linq;
 
 namespace NoMathExpectation.Celeste.Celestibility
 {
@@ -15,27 +17,36 @@ namespace NoMathExpectation.Celeste.Celestibility
         public static void CheckCollisionLeft(this Player player)
         {
             int maxDistance = 64;
-            int distance = maxDistance;
-            for (int i = 0; i < maxDistance; i++)
+            int distance;
+
+            var soilds = player.Scene.Tracker.GetEntities<Solid>().Cast<Solid>().ToList();
+            var playerColliderComponents = player.Scene.Tracker.GetComponents<PlayerCollider>().Cast<PlayerCollider>().ToList();
+
+            if (player.Scene.OnInterval(1))
             {
-                Vector2 pos = player.Position + new Vector2(-i, 0);
-                bool broken = false;
-                foreach (var entity in player.Scene.Entities)
+                LogUtil.Log($"Soilds: {soilds.Count}", LogLevel.Verbose);
+                LogUtil.Log($"PlayerColliderComponents: {playerColliderComponents.Count}", LogLevel.Verbose);
+            }
+
+            for (distance = 0; distance < maxDistance; distance++)
+            {
+                Vector2 pos = player.Position + new Vector2(-distance, 0);
+
+                if (Collide.Check(player, soilds, pos))
                 {
-                    if (entity != player && Collide.Check(player, entity, pos))
-                    {
-                        distance = i;
-                        broken = true;
-                        break;
-                    }
+                    break;
                 }
-                if (broken)
+
+                if (playerColliderComponents.Any((component) => component.CheckWithoutAction(player)))
                 {
                     break;
                 }
             }
 
-            LogUtil.Log($"Left distance: {distance}", LogLevel.Verbose);
+            if (player.Scene.OnInterval(1))
+            {
+                LogUtil.Log($"Left distance: {distance}", LogLevel.Verbose);
+            }
         }
 
         private static void PlayerUpdate(On.Celeste.Player.orig_Update orig, Player self)
