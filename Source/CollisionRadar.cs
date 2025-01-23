@@ -2,6 +2,7 @@
 using Celeste.Mod;
 using Microsoft.Xna.Framework;
 using Monocle;
+using NoMathExpectation.Celeste.Celestibility.Entities;
 using NoMathExpectation.Celeste.Celestibility.Extensions;
 using System.Linq;
 
@@ -49,6 +50,12 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
         }
 
+        private static void PlayerAdded(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
+        {
+            orig(self, scene);
+            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerLeftCollisionDetectorName, new Vector2(-1, 0), 64));
+        }
+
         private static void PlayerUpdate(On.Celeste.Player.orig_Update orig, Player self)
         {
             orig(self);
@@ -57,11 +64,13 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         internal static void Hook()
         {
+            On.Celeste.Player.Added += PlayerAdded;
             On.Celeste.Player.Update += PlayerUpdate;
         }
 
         internal static void Unhook()
         {
+            On.Celeste.Player.Added -= PlayerAdded;
             On.Celeste.Player.Update -= PlayerUpdate;
         }
     }
