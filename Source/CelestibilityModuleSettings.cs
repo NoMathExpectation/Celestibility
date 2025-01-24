@@ -132,5 +132,8 @@ namespace NoMathExpectation.Celeste.Celestibility
         {
             ToggleCamera(null);
         }
+
+        [SettingName("Celestibility_setting_radar")]
+        public bool RadarEnabled { get; set; } = true;
     }
 }

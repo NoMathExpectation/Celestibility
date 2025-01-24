@@ -13,6 +13,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
     [CustomEntity("Celestibility/CollisionDetector")]
     internal class CollisionDetector : Entity
     {
+        public static bool Enabled => CelestibilityModule.Settings.RadarEnabled;
+
         private readonly string name;
         public const string PlayerLeftCollisionDetectorName = "leftCollisionDetector";
         public const string PlayerRightCollisionDetectorName = "rightCollisionDetector";
@@ -25,12 +27,15 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
         private Player player;
 
-        public CollisionDetector(Player player, string name, Vector2 direction, float maxDistance = 64)
+        public float Pitch;
+
+        public CollisionDetector(Player player, string name, Vector2 direction, float maxDistance = 64, float pitch = 100)
         {
             this.player = player;
             this.name = name;
             Direction = direction;
             MaxDistance = maxDistance;
+            Pitch = pitch;
             Reset();
         }
 
@@ -40,6 +45,29 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             Position = player.Position;
             DistanceTravelled = 0;
             Collider = player.Collider.Clone();
+        }
+
+        private float playCooldown = 0;
+
+        public void PlaySound()
+        {
+            if (!Enabled)
+            {
+                return;
+            }
+
+            if (playCooldown > 0)
+            {
+                return;
+            }
+
+            if (Direction.Y > 0 && !player.Dead && player.OnGround())
+            {
+                return;
+            }
+
+            Audio.Play("event:/Celestibility/rect_wave", Position, "pitch", Pitch);
+            playCooldown = 0.125f;
         }
 
         public override void Awake(Scene scene)
@@ -73,11 +101,13 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         {
             base.Update();
 
-            if (player is null)
+            if (player.Dead)
             {
                 RemoveSelf();
                 return;
             }
+
+            playCooldown -= Engine.DeltaTime;
 
             Position += Direction;
             DistanceTravelled += Direction.Length();
@@ -91,7 +121,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
             if (CollideCheck<Solid>() || Scene.Tracker.GetComponents<PlayerCollider>().Cast<PlayerCollider>().Any((component) => component.CheckWithoutAction(player, Position)))
             {
-                Audio.Play("event:/Celestibility/rect_wave", Position);
+                PlaySound();
                 Reset();
                 return;
             }

@@ -55,6 +55,8 @@ Celestibility_setting_bind_camera_position=朗读照相机位置
 Celestibility_setting_bind_player_position=朗读玩家位置
 Celestibility_setting_narrate_tutorial=朗读教程
 
+Celestibility_setting_radar=启用雷达
+
 Celestibility_speech_Keys_Enter=回车
 Celestibility_speech_Keys_CapsLock=大小写锁定键
 Celestibility_speech_Keys_Escape=退出键

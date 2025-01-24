@@ -53,7 +53,10 @@ namespace NoMathExpectation.Celeste.Celestibility
         private static void PlayerAdded(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
         {
             orig(self, scene);
-            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerLeftCollisionDetectorName, new Vector2(-1, 0), 64));
+            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerLeftCollisionDetectorName, new Vector2(-1, 0), 64, 50));
+            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerRightCollisionDetectorName, new Vector2(1, 0), 64, 100));
+            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerUpCollisionDetectorName, new Vector2(0, -1), 64, 150));
+            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerDownCollisionDetectorName, new Vector2(0, 1), 64, 200));
         }
 
         private static void PlayerUpdate(On.Celeste.Player.orig_Update orig, Player self)
