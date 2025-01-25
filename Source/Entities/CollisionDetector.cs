@@ -31,6 +31,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
         public CollisionDetector(Player player, string name, Vector2 direction, float maxDistance = 64, float pitch = 100)
         {
+            Tag |= Tags.FrozenUpdate | Tags.TransitionUpdate | Tags.Persistent;
+
             this.player = player;
             this.name = name;
             Direction = direction;
