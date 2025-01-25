@@ -23,7 +23,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
         public Vector2 Direction;
         public float MaxDistance;
-        public float DistanceTravelled { get; private set; } = 0;
+        public Vector2 Displacement = Vector2.Zero;
 
         private Player player;
 
@@ -41,9 +41,9 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
         public void Reset()
         {
-            LogUtil.Log($"{name} distance: {DistanceTravelled}", LogLevel.Verbose);
+            LogUtil.Log($"{name} distance: {Displacement.Length()}", LogLevel.Verbose);
             Position = player.Position;
-            DistanceTravelled = 0;
+            Displacement = Vector2.Zero;
             Collider = player.Collider.Clone();
         }
 
@@ -109,9 +109,9 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
             playCooldown -= Engine.DeltaTime;
 
-            Position += Direction;
-            DistanceTravelled += Direction.Length();
-            if (DistanceTravelled > MaxDistance)
+            Displacement += Direction;
+            Position = player.Position + Displacement;
+            if (Displacement.Length() > MaxDistance)
             {
                 Reset();
                 return;
