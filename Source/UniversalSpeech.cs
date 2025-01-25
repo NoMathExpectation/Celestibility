@@ -76,6 +76,11 @@ namespace NoMathExpectation.Celeste.Celestibility
             return false;
         }
 
+        public static void SpeechSay(this int i, bool interrupt = false)
+        {
+            i.ToString().SpeechSay(interrupt);
+        }
+
         public static void SpeechSay(this TextMenu.Item item, bool update = false)
         {
             if (!Enabled || item is null)
@@ -106,7 +111,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             {
                 DynamicData values = DynamicData.For(data.Get("Values"));
                 int count = values.Get<int>("Count");
-                if (count > 0) {
+                if (count > 0)
+                {
                     int index = data.Get<int>("Index");
                     text += ", " + DynamicData.For(values.Invoke("get_Item", index)).Get<string>("Item1");
                 }
@@ -592,7 +598,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             sb.ToString().SpeechSay(true);
         }
 
-        public static void SpeechSay(this AutoSavingNotice notice) {
+        public static void SpeechSay(this AutoSavingNotice notice)
+        {
             "autosaving_title_PC".SpeechSay();
             "autosaving_desc_PC".SpeechSay();
         }

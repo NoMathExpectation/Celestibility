@@ -10,6 +10,10 @@ namespace NoMathExpectation.Celeste.Celestibility
 {
     internal static class CollisionRadar
     {
+        public static bool ToggleRadarPressed => CelestibilityModule.Settings.RadarToggle.Pressed;
+        public static bool IncreaseRadarDistance => CelestibilityModule.Settings.RadarIncreaseDistance.Pressed;
+        public static bool DecreaseRadarDistance => CelestibilityModule.Settings.RadarDecreaseDistance.Pressed;
+
         public static void CheckCollision(this Player player)
         {
             CheckCollisionLeft(player);
@@ -53,16 +57,86 @@ namespace NoMathExpectation.Celeste.Celestibility
         private static void PlayerAdded(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
         {
             orig(self, scene);
-            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerLeftCollisionDetectorName, new Vector2(-1, 0), 64, 50));
-            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerRightCollisionDetectorName, new Vector2(1, 0), 64, 100));
-            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerUpCollisionDetectorName, new Vector2(0, -1), 64, 150));
-            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerDownCollisionDetectorName, new Vector2(0, 1), 64, 200));
+
+            //add detectors
+            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerLeftCollisionDetectorName, new Vector2(-1, 0), 50));
+            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerRightCollisionDetectorName, new Vector2(1, 0), 100));
+            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerUpCollisionDetectorName, new Vector2(0, -1), 150));
+            scene.Add(new CollisionDetector(self, CollisionDetector.PlayerDownCollisionDetectorName, new Vector2(0, 1), 200));
+        }
+
+
+        public static void ToggleRadar(bool? @bool = null)
+        {
+            bool enabled = @bool ?? !CelestibilityModule.Settings.RadarEnabled;
+            CelestibilityModule.Settings.RadarEnabled = enabled;
+            string s = enabled ? "on" : "off";
+            string log = $"Celestibility_radar_{s}".DialogClean();
+            LogUtil.Log(log);
+            if (Engine.Commands.Open)
+            {
+                Engine.Commands.Log(log);
+            }
+            log.SpeechSay();
+        }
+
+        [Command("radar", "(Celestibility) Toggle radar.")]
+        public static void ToggleRadar()
+        {
+            ToggleRadar(null);
+        }
+
+        [Command("radar_distance", "(Celestibility) Toggle radar distance.")]
+        public static void SetRadarDistance(int distance)
+        {
+            if (distance < 1)
+            {
+                if (Engine.Commands.Open)
+                {
+                    Engine.Commands.Log($"Cannot set distance for less than 1.");
+                }
+                return;
+            }
+
+            CelestibilityModule.Settings.RadarMaxDistance = distance;
+            CelestibilityModule.Settings.RadarMaxDistance.SpeechSay(true);
+
+            if (Engine.Commands.Open)
+            {
+                Engine.Commands.Log($"Set radar distance to {distance}.");
+            }
         }
 
         private static void PlayerUpdate(On.Celeste.Player.orig_Update orig, Player self)
         {
             orig(self);
+
+            //deprecated
             //CheckCollision(self);
+
+            //check keys
+            if (ToggleRadarPressed)
+            {
+                ToggleRadar();
+            }
+
+            if (IncreaseRadarDistance)
+            {
+                if (CelestibilityModule.Settings.RadarMaxDistance < 128)
+                {
+                    CelestibilityModule.Settings.RadarMaxDistance++;
+                }
+                CelestibilityModule.Settings.RadarMaxDistance.SpeechSay(true);
+            }
+
+            if (DecreaseRadarDistance)
+            {
+                if (CelestibilityModule.Settings.RadarMaxDistance > 1)
+                {
+                    CelestibilityModule.Settings.RadarMaxDistance--;
+                }
+                CelestibilityModule.Settings.RadarMaxDistance.SpeechSay(true);
+            }
         }
 
         internal static void Hook()

@@ -22,21 +22,20 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         public const string PlayerDownCollisionDetectorName = "downCollisionDetector";
 
         public Vector2 Direction;
-        public float MaxDistance;
+        public static float MaxDistance => CelestibilityModule.Settings.RadarMaxDistance;
         public Vector2 Displacement = Vector2.Zero;
 
         private Player player;
 
         public float Pitch;
 
-        public CollisionDetector(Player player, string name, Vector2 direction, float maxDistance = 64, float pitch = 100)
+        public CollisionDetector(Player player, string name, Vector2 direction, float pitch = 100)
         {
             Tag |= Tags.FrozenUpdate | Tags.TransitionUpdate | Tags.Persistent;
 
             this.player = player;
             this.name = name;
             Direction = direction;
-            MaxDistance = maxDistance;
             Pitch = pitch;
             Reset();
         }

@@ -135,5 +135,14 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         [SettingName("Celestibility_setting_radar")]
         public bool RadarEnabled { get; set; } = true;
+        [SettingName("Celestibility_setting_radar_max_distance")]
+        [SettingRange(1, 128, true)]
+        public int RadarMaxDistance { get; set; } = 64;
+        [SettingName("Celestibility_setting_radar_toggle")]
+        public ButtonBinding RadarToggle { get; set; } = new ButtonBinding(0, Keys.D0);
+        [SettingName("Celestibility_setting_radar_increase_distance")]
+        public ButtonBinding RadarIncreaseDistance { get; set; } = new ButtonBinding(0, Keys.OemPlus);
+        [SettingName("Celestibility_setting_radar_decrease_distance")]
+        public ButtonBinding RadarDecreaseDistance { get; set; } = new ButtonBinding(0, Keys.OemMinus);
     }
 }
