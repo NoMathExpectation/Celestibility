@@ -121,7 +121,10 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
             Collider = player.Collider.Clone();
 
-            if (CollideCheck<Solid>() || Scene.Tracker.GetComponents<PlayerCollider>().Cast<PlayerCollider>().Any((component) => component.CheckWithoutAction(player, Position)))
+            bool checkPlatform = Direction.Y > 0 && CollideCheck<Platform>();
+            bool checkSoild = CollideCheck<Solid>();
+            bool checkPlayerColliders = Scene.Tracker.GetComponents<PlayerCollider>().Cast<PlayerCollider>().Any((component) => component.CheckWithoutAction(player, Position));
+            if (checkPlatform || checkSoild || checkPlayerColliders)
             {
                 PlaySound();
                 Reset();
