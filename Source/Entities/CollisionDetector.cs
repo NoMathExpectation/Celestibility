@@ -1,5 +1,4 @@
 ﻿using Celeste;
-using Celeste.Mod;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -43,7 +42,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
         public void Reset()
         {
-            LogUtil.Log($"{name} distance: {Displacement.Length()}", LogLevel.Verbose);
+            //LogUtil.Log($"{name} distance: {Displacement.Length()}", LogLevel.Verbose);
             Position = player.Position;
             Displacement = Vector2.Zero;
             Collider = player.Collider.Clone();
