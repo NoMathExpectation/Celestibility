@@ -67,7 +67,17 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
                 return;
             }
 
-            Audio.Play("event:/Celestibility/rect_wave", Position, "pitch", Pitch);
+            var pos = Position;
+            if (Direction.X > 0)
+            {
+                pos.X += Collider.Width;
+            }
+            if (Direction.Y > 0)
+            {
+                pos.Y += Collider.Height;
+            }
+
+            Audio.Play("event:/Celestibility/rect_wave", pos, "pitch", Pitch);
             playCooldown = 0.125f;
         }
 
