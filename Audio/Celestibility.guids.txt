@@ -1,3 +1,4 @@
+{3cb05852-e12f-4f19-83df-4a001da27d68} event:/Celestibility/rect_wave
 {ad25a031-880b-4f88-ac12-82d6c52fbdea} event:/char/badeline/appear
 {7a71fc61-b688-4d82-a2b7-781c2434e942} event:/char/badeline/booster_begin
 {b2ee45d8-e1b0-43f1-baaa-f6e77d37ddb5} event:/char/badeline/booster_final
@@ -491,6 +492,7 @@
 {7c01de41-a31a-43c3-9c0f-9ae85ad94c68} event:/game/general/wall_break_ice
 {92f75010-4e90-428e-834c-1315ddbd9460} event:/game/general/wall_break_stone
 {634bdd66-3f53-4679-8ced-fadfc60d412f} event:/game/general/wall_break_wood
+{075fcfd8-aa45-4097-8f02-5a2b6d1223eb} event:/GravityLaboratory/BGM
 {51873fdd-604e-4810-9db1-8c6e5a6049b5} event:/music/cassette/01_forsaken_city
 {e44a2aa5-f96e-4d75-8018-8bee278017ad} event:/music/cassette/02_old_site
 {bb2ac8fc-6353-4127-bc7b-7439262508da} event:/music/cassette/03_resort
@@ -812,7 +814,6 @@
 {ca8ffe65-72eb-4fb3-9c3d-27fef47bc3d1} event:/ui/world_map/whoosh/700ms_forward
 {2dca99b6-dcf5-40e6-8cd1-c72f97d364cd} event:/ui/world_map/whoosh/900ms_back
 {21a98c43-8e79-4b8a-8963-a269735f3989} event:/ui/world_map/whoosh/900ms_forward
-{3cb05852-e12f-4f19-83df-4a001da27d68} event:/Celestibility/rect_wave
 {ea595d6d-cb07-4897-81cb-4830bf5823cb} event:/!!!_README_FIRST
 {c7aad72f-9796-42d3-980b-d093fd765716} bus:/
 {aac396d1-a63f-418a-810a-5d5a59fb2c43} bus:/gameplay_sfx
@@ -993,10 +994,11 @@
 {641d4a72-8e6e-41a8-8f3d-b28219bd4cd7} snapshot:/berry_cooperation/3000s_down
 {365efe2d-29e7-4d45-988e-451406863f9a} snapshot:/berry_cooperation/4000s_down
 {1aa61ee8-68fc-4c62-9a54-35743044bafe} snapshot:/berry_cooperation/5000s_down
+{f0746eae-db5b-4433-86d2-813d26968df7} bank:/Celestibility
 {a327f717-e8b5-4fb0-b4dd-84bd8a585fe0} bank:/dlc_music
 {e85b3c9e-428d-41b7-82c0-37814f3cbf15} bank:/dlc_sfx
+{ebc67adb-f685-4eac-bec2-565a73ab17c5} bank:/GravityLaboratory
 {7916fdbf-1253-451d-a369-6dfd34341e4e} bank:/music
 {98263171-3ea2-482b-abb7-9af01e4c002a} bank:/sfx
 {f0efde81-92ec-4f1a-8b48-815f4d8a3255} bank:/ui
 {f42d1384-f9ea-4ba4-9e08-a4d067c55b3b} bank:/Master Bank
-{f0746eae-db5b-4433-86d2-813d26968df7} bank:/Celestibility
