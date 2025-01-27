@@ -11,8 +11,20 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
 
         public bool UseSlave;
 
+        public bool Initialized { get; private set; } = false;
+
         public void Say(string text, bool interrupt = false)
         {
+            if (!Initialized)
+            {
+                LogUtil.Log("Initializing BoyCtrl...", LogLevel.Info);
+                if (BoyCtrlInitializeAnsi(null) != BoyCtrlError.e_bcerr_success)
+                {
+                    LogUtil.Log("Cannot initialize BoyCtrl!", LogLevel.Warn);
+                    return;
+                }
+                Initialized = true;
+            }
             if (!BoyCtrlIsReaderRunning())
             {
                 LogUtil.Log("BoyCtrl reader is not running!", LogLevel.Warn);
@@ -21,7 +33,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
             {
                 BoyCtrlStopSpeaking(UseSlave);
             }
-            BoyCtrlSpeakU8(text, UseSlave, !interrupt, false, (value) => { });
+            BoyCtrlSpeakAnsi(text, UseSlave, !interrupt, false, (value) => { });
         }
 
         public void Stop()
@@ -32,11 +44,11 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
         public BoyCtrlSpeechProvider(bool useSlave = true)
         {
             UseSlave = useSlave;
-            BoyCtrlInitializeU8(null);
         }
 
         ~BoyCtrlSpeechProvider()
         {
+            Initialized = false;
             BoyCtrlUninitialize();
         }
 
@@ -52,21 +64,21 @@ namespace NoMathExpectation.Celeste.Celestibility.Speech
             e_bcerr_unavailable = 3,
         }
 
-        [DllImport(dll, CharSet = CharSet.Auto)]
-        private static extern BoyCtrlError BoyCtrlInitializeU8(string logPath);
+        [DllImport(dll, CharSet = CharSet.Ansi)]
+        private static extern BoyCtrlError BoyCtrlInitializeAnsi(string logPath);
 
         private delegate void BoyCtrlSpeakCompleteFunc(int reason);
 
-        [DllImport(dll, CharSet = CharSet.Auto)]
-        private static extern BoyCtrlError BoyCtrlSpeakU8(string text, bool withSlave, bool append, bool allowBreak, [MarshalAs(UnmanagedType.FunctionPtr)] BoyCtrlSpeakCompleteFunc onCompletion);
+        [DllImport(dll, CharSet = CharSet.Ansi)]
+        private static extern BoyCtrlError BoyCtrlSpeakAnsi(string text, bool withSlave, bool append, bool allowBreak, [MarshalAs(UnmanagedType.FunctionPtr)] BoyCtrlSpeakCompleteFunc onCompletion);
 
-        [DllImport(dll, CharSet = CharSet.Auto)]
+        [DllImport(dll, CharSet = CharSet.Ansi)]
         private static extern BoyCtrlError BoyCtrlStopSpeaking(bool withSlave);
 
-        [DllImport(dll, CharSet = CharSet.Auto)]
+        [DllImport(dll, CharSet = CharSet.Ansi)]
         private static extern void BoyCtrlUninitialize();
 
-        [DllImport(dll, CharSet = CharSet.Auto)]
+        [DllImport(dll, CharSet = CharSet.Ansi)]
         private static extern bool BoyCtrlIsReaderRunning();
     }
 }
