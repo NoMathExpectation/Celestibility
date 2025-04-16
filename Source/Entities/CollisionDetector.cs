@@ -62,6 +62,11 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
                 return;
             }
 
+            if (player.Speed == Vector2.Zero)
+            {
+                return;
+            }
+
             if (Direction.Y > 0 && !player.Dead && player.OnGround())
             {
                 return;
@@ -77,7 +82,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
                 pos.Y += Collider.Height;
             }
 
-            Audio.Play("event:/Celestibility/rect_wave", pos, "pitch", Pitch);
+            Audio.Play("event:/Celestibility/radar", pos, "pitch", Pitch);
             playCooldown = 0.125f;
         }
 
