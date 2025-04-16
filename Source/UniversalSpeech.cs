@@ -237,7 +237,7 @@ namespace NoMathExpectation.Celeste.Celestibility
                     int split = method.LastIndexOf('.');
                     Type invokeType = Type.GetType(method.Substring(0, split));
                     MethodInfo invokeMethod = invokeType.GetMethod(method.Substring(split + 1), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { entityType }, null);
-                    invokeMethod.Invoke(null, new object[] { entity });
+                    invokeMethod.Invoke(null, [entity]);
                     return;
                 }
                 catch (Exception e)
