@@ -7,6 +7,7 @@ using MonoMod.Utils;
 using NoMathExpectation.Celeste.Celestibility.Speech;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -213,6 +214,9 @@ namespace NoMathExpectation.Celeste.Celestibility
             t.SpeechSay(interrupt);
         }
 
+        public static bool DumpUnknownEntities => CelestibilityModule.Settings.Debug.DumpUnknownEntities;
+        public const string DumpFilePath = "Celestibility/dumped_entities.txt";
+
         public static void SpeechSay(this Entity entity, bool ignoreOff = false)
         {
             if (!(Enabled || ignoreOff) || entity is null)
@@ -268,6 +272,27 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
 
             LogUtil.Log($"Unable to find speech way for entity speech {entityType.FullName}.", LogLevel.Verbose);
+            if (DumpUnknownEntities)
+            {
+                var file = new FileInfo(DumpFilePath);
+                file.Directory.Create();
+
+                bool exists = file.Exists;
+                if (exists)
+                {
+                    using var reader = file.OpenText();
+                    exists = reader.ReadToEnd()
+                        .Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries)
+                        .Any(line => line.StartsWith($"{textKey}="));
+                }
+
+                if (!exists)
+                {
+                    using var writer = file.AppendText();
+                    writer.WriteLine($"{textKey}=");
+                }
+            }
+
             entityType.ToString().SpeechSay();
         }
 
