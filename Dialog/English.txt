@@ -66,6 +66,9 @@ Celestibility_setting_radar_decrease_distance=Decrease Radar Distance
 Celestibility_setting_read_ground=Narrate Ground
 Celestibility_read_ground_empty=Not On Ground
 
+Celestibility_setting_read_transition=Narrate Transition
+Celestibility_read_transition=Transiting
+
 Celestibility_setting_debug=Debug Options
 Celestibility_setting_debug_dump_unknown_entities=Dump Unknown Entities
 Celestibility_setting_debug_dump_unknown_entities_desc=Output unknown entities to a file for translation.

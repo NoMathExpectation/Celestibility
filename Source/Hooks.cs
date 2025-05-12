@@ -69,6 +69,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             On.Celeste.Poem.Update += PoemUpdate;
             On.Celeste.MemorialText.Update += MemorialTextUpdate;
 
+            Everest.Events.Level.OnTransitionTo += OnLevelTransition;
+
             ChapterExtension.Hook();
 
             CollisionRadar.Hook();
@@ -133,6 +135,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             //HeartGemExtension.Unhook();
             On.Celeste.Poem.Update -= PoemUpdate;
             On.Celeste.MemorialText.Update -= MemorialTextUpdate;
+
+            Everest.Events.Level.OnTransitionTo -= OnLevelTransition;
 
             ChapterExtension.Unhook();
 
@@ -517,6 +521,16 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
 
             data.Set("origAlpha", alpha);
+        }
+
+        private static void OnLevelTransition(Level level, LevelData next, Vector2 direction)
+        {
+            if (!CelestibilityModule.Settings.ReadTransition)
+            {
+                return;
+            }
+
+            "Celestibility_read_transition".SpeechSay(true);
         }
     }
 }

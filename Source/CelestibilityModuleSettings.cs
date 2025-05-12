@@ -148,6 +148,9 @@ namespace NoMathExpectation.Celeste.Celestibility
         [SettingName("Celestibility_setting_read_ground")]
         public bool ReadGround { get; set; } = true;
 
+        [SettingName("Celestibility_setting_read_transition")]
+        public bool ReadTransition { get; set; } = true;
+
         [SettingSubMenu]
         public class DebugSubMenu
         {
