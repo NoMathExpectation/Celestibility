@@ -169,10 +169,10 @@ namespace NoMathExpectation.Celeste.Celestibility
             dynamicData.Set(previousGroundClassNameKey, groundClassName);
             if (collideGround is null)
             {
-                "Celestibility_read_ground_empty".SpeechSay();
+                "Celestibility_read_ground_empty".SpeechSay(true);
                 return;
             }
-            collideGround.SpeechSay();
+            collideGround.SpeechSay(true);
         }
 
         internal static void Hook()

@@ -217,11 +217,16 @@ namespace NoMathExpectation.Celeste.Celestibility
         public static bool DumpUnknownEntities => CelestibilityModule.Settings.Debug.DumpUnknownEntities;
         public const string DumpFilePath = "Celestibility/dumped_entities.txt";
 
-        public static void SpeechSay(this Entity entity, bool ignoreOff = false)
+        public static void SpeechSay(this Entity entity, bool interrupt = false, bool ignoreOff = false)
         {
             if (!(Enabled || ignoreOff) || entity is null)
             {
                 return;
+            }
+
+            if (interrupt)
+            {
+                SpeechStop();
             }
 
             LogUtil.Log($"Entity: {entity}", LogLevel.Verbose);
