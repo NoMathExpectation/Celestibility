@@ -2,6 +2,7 @@
 using Celeste.Mod;
 using Microsoft.Xna.Framework;
 using Monocle;
+using MonoMod.Utils;
 using NoMathExpectation.Celeste.Celestibility.Entities;
 using NoMathExpectation.Celeste.Celestibility.Extensions;
 using System.Linq;
@@ -137,6 +138,41 @@ namespace NoMathExpectation.Celeste.Celestibility
                 }
                 CelestibilityModule.Settings.RadarMaxDistance.SpeechSay(true);
             }
+
+            CheckGround(self);
+        }
+
+        public static bool ReadGround => CelestibilityModule.Settings.ReadGround;
+
+        private static void CheckGround(this Player player)
+        {
+            const string previousGroundClassNameKey = "previousGroundClassName";
+
+            var dynamicData = DynamicData.For(player);
+            if (!ReadGround)
+            {
+                dynamicData.Set(previousGroundClassNameKey, null);
+                return;
+            }
+
+            var previousGroundClassName = dynamicData.Get<string>(previousGroundClassNameKey);
+
+            var collideGround = player.CollideFirst<Platform>(player.Position + Vector2.UnitY) ?? player.CollideFirstOutside<Platform>(player.Position + Vector2.UnitY);
+            //LogUtil.Log($"Ground: {collideGround}", LogLevel.Debug);
+            var groundClassName = collideGround?.GetType()?.Name;
+            if (groundClassName == previousGroundClassName)
+            {
+                return;
+            }
+
+            LogUtil.Log($"Ground changed: {groundClassName}", LogLevel.Debug);
+            dynamicData.Set(previousGroundClassNameKey, groundClassName);
+            if (collideGround is null)
+            {
+                "Celestibility_read_ground_empty".SpeechSay();
+                return;
+            }
+            collideGround.SpeechSay();
         }
 
         internal static void Hook()

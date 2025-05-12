@@ -40,10 +40,6 @@ Celestibility_setting_speech_test_play=Test Narrate
 Celestibility_setting_speech_provider=Speech Provider
 Celestibility_setting_speech_provider_none=No Speech Provider
 
-Celestibility_setting_debug=Debug Options
-Celestibility_setting_debug_dump_unknown_entities=Dump Unknown Entities
-Celestibility_setting_debug_dump_unknown_entities_desc=Output unknown entities to a file for translation.
-
 Celestibility_camera_on=Camera on
 Celestibility_camera_off=Camera off
 Celestibility_setting_camera=Enable Camera
@@ -66,6 +62,13 @@ Celestibility_setting_radar_max_distance=Radar Max Distance
 Celestibility_setting_radar_toggle=Toggle Radar
 Celestibility_setting_radar_increase_distance=Increase Radar Distance
 Celestibility_setting_radar_decrease_distance=Decrease Radar Distance
+
+Celestibility_setting_read_ground=Narrate Ground
+Celestibility_read_ground_empty=Not On Ground
+
+Celestibility_setting_debug=Debug Options
+Celestibility_setting_debug_dump_unknown_entities=Dump Unknown Entities
+Celestibility_setting_debug_dump_unknown_entities_desc=Output unknown entities to a file for translation.
 
 Celestibility_speech_entity_text_Celeste_Strawberry_uncollected=Uncollected
 Celestibility_speech_entity_text_Celeste_Strawberry_collected=Collected

@@ -145,6 +145,9 @@ namespace NoMathExpectation.Celeste.Celestibility
         [SettingName("Celestibility_setting_radar_decrease_distance")]
         public ButtonBinding RadarDecreaseDistance { get; set; } = new ButtonBinding(0, Keys.OemMinus);
 
+        [SettingName("Celestibility_setting_read_ground")]
+        public bool ReadGround { get; set; } = true;
+
         [SettingSubMenu]
         public class DebugSubMenu
         {
