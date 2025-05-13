@@ -69,6 +69,9 @@ Celestibility_read_ground_empty=Not On Ground
 Celestibility_setting_read_transition=Narrate Transition
 Celestibility_read_transition=Transiting
 
+Celestibility_setting_check_bump=Check Bump
+Celestibility_setting_check_bump_desc=Play sound when the player bumps into soilds or platforms.
+
 Celestibility_setting_debug=Debug Options
 Celestibility_setting_debug_dump_unknown_entities=Dump Unknown Entities
 Celestibility_setting_debug_dump_unknown_entities_desc=Output unknown entities to a file for translation.

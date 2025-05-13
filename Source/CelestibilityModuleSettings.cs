@@ -151,6 +151,10 @@ namespace NoMathExpectation.Celeste.Celestibility
         [SettingName("Celestibility_setting_read_transition")]
         public bool ReadTransition { get; set; } = true;
 
+        [SettingName("Celestibility_setting_check_bump")]
+        [SettingSubText("Celestibility_setting_check_bump_desc")]
+        public bool CheckBump { get; set; } = true;
+
         [SettingSubMenu]
         public class DebugSubMenu
         {

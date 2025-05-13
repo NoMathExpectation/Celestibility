@@ -140,6 +140,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
 
             CheckGround(self);
+
+            CheckBump(self);
         }
 
         public static bool ReadGround => CelestibilityModule.Settings.ReadGround;
@@ -173,6 +175,67 @@ namespace NoMathExpectation.Celeste.Celestibility
                 return;
             }
             collideGround.SpeechSay(true);
+        }
+
+        public static bool CheckBumpEnabled => CelestibilityModule.Settings.CheckBump;
+
+        private static void CheckBump(this Player player)
+        {
+            if (!CheckBumpEnabled)
+            {
+                return;
+            }
+
+            var data = DynamicData.For(player);
+            bool bump = false;
+
+            var wasBumpLeft = data.Get<bool?>("wasBumpLeft") ?? false;
+            var bumpLeft = player.Speed.X < 0 && (player.CollideCheck<Solid>(player.Position - Vector2.UnitX) || player.CollideCheckOutside<Solid>(player.Position - Vector2.UnitX));
+            data.Set("wasBumpLeft", bumpLeft);
+            if (bumpLeft && !wasBumpLeft)
+            {
+                bump = true;
+            }
+
+            var wasBumpRight = data.Get<bool?>("wasBumpRight") ?? false;
+            var bumpRight = player.Speed.X > 0 && (player.CollideCheck<Solid>(player.Position + Vector2.UnitX) || player.CollideCheckOutside<Solid>(player.Position + Vector2.UnitX));
+            data.Set("wasBumpRight", bumpRight);
+            if (bumpRight && !wasBumpRight)
+            {
+                bump = true;
+            }
+
+            var wasBumpUp = data.Get<bool?>("wasBumpUp") ?? false;
+            var bumpUp = player.Speed.Y < 0 && (player.CollideCheck<Solid>(player.Position - Vector2.UnitY) || player.CollideCheckOutside<Solid>(player.Position - Vector2.UnitY));
+            data.Set("wasBumpUp", bumpUp);
+            if (bumpUp && !wasBumpUp)
+            {
+                bump = true;
+            }
+
+            var wasBumpDown = data.Get<bool?>("wasBumpDown") ?? false;
+            var bumpDown = data.Get<bool?>("onGround") ?? false;
+            data.Set("wasBumpDown", bumpDown);
+            if (bumpDown && !wasBumpDown)
+            {
+                bump = true;
+            }
+
+            if (!bump)
+            {
+                return;
+            }
+
+            var soundPos = player.Position;
+            if (player.Speed.X > 0)
+            {
+                soundPos.X += player.Collider.Width;
+            }
+            if (player.Speed.Y > 0)
+            {
+                soundPos.Y += player.Collider.Height;
+            }
+            Audio.Play("event:/Celestibility/bump_3d", soundPos);
         }
 
         internal static void Hook()

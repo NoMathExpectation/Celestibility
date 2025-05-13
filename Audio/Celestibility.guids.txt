@@ -1,6 +1,8 @@
-{3cb05852-e12f-4f19-83df-4a001da27d68} event:/Celestibility/rect_wave
 {ae850310-adc2-443c-bdd3-0d075645a332} event:/Celestibility/radar
+{3cb05852-e12f-4f19-83df-4a001da27d68} event:/Celestibility/rect_wave
 {6bb21fee-5861-425b-afa2-aa22e7b0b366} event:/Celestibility/rect_wave_3d
+{ee4cefa8-21d4-47df-a342-cec32266fee2} event:/Celestibility/bump_3d
+{e3d03df2-c13c-4746-8ecb-bf7e5e4dafbe} event:/Celestibility/bump
 {ad25a031-880b-4f88-ac12-82d6c52fbdea} event:/char/badeline/appear
 {7a71fc61-b688-4d82-a2b7-781c2434e942} event:/char/badeline/booster_begin
 {b2ee45d8-e1b0-43f1-baaa-f6e77d37ddb5} event:/char/badeline/booster_final
