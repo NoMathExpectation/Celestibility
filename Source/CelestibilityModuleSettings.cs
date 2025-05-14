@@ -138,6 +138,8 @@ namespace NoMathExpectation.Celeste.Celestibility
         [SettingName("Celestibility_setting_radar_max_distance")]
         [SettingRange(1, 128, true)]
         public int RadarMaxDistance { get; set; } = 64;
+        [SettingName("Celestibility_setting_radar_play_on_still")]
+        public bool RadarPlayOnStill { get; set; } = false;
         [SettingName("Celestibility_setting_radar_toggle")]
         public ButtonBinding RadarToggle { get; set; } = new ButtonBinding(0, Keys.D0);
         [SettingName("Celestibility_setting_radar_increase_distance")]

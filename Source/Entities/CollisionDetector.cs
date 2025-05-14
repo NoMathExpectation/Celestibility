@@ -28,6 +28,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
         public float Pitch;
 
+        public static bool PlayOnStill => CelestibilityModule.Settings.RadarPlayOnStill;
+
         public CollisionDetector(Player player, string name, Vector2 direction, float pitch = 100)
         {
             Visible = false;
@@ -62,10 +64,10 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
                 return;
             }
 
-            //if (player.Speed == Vector2.Zero)
-            //{
-            //    return;
-            //}
+            if (!PlayOnStill && player.Speed == Vector2.Zero)
+            {
+                return;
+            }
 
             if (Direction.Y > 0 && !player.Dead && player.OnGround())
             {

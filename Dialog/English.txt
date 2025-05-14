@@ -59,6 +59,7 @@ Celestibility_radar_on=Radar on
 Celestibility_radar_off=Radar off
 Celestibility_setting_radar=Enable Radar
 Celestibility_setting_radar_max_distance=Radar Max Distance
+Celestibility_setting_radar_play_on_still=Play Radar Sound When Stay Still
 Celestibility_setting_radar_toggle=Toggle Radar
 Celestibility_setting_radar_increase_distance=Increase Radar Distance
 Celestibility_setting_radar_decrease_distance=Decrease Radar Distance
