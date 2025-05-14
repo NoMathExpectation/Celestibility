@@ -62,10 +62,10 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
                 return;
             }
 
-            if (player.Speed == Vector2.Zero)
-            {
-                return;
-            }
+            //if (player.Speed == Vector2.Zero)
+            //{
+            //    return;
+            //}
 
             if (Direction.Y > 0 && !player.Dead && player.OnGround())
             {
@@ -81,6 +81,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             {
                 pos.Y += Collider.Height;
             }
+            pos = SceneAs<Level>().GetPlayerBasedSoundPosition(pos);
 
             Audio.Play("event:/Celestibility/radar", pos, "pitch", Pitch);
             playCooldown = 0.125f;
