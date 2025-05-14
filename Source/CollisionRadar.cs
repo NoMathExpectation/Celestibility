@@ -187,54 +187,56 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
 
             var data = DynamicData.For(player);
-            bool bump = false;
 
             var wasBumpLeft = data.Get<bool?>("wasBumpLeft") ?? false;
-            var bumpLeft = player.Speed.X < 0 && (player.CollideCheck<Solid>(player.Position - Vector2.UnitX) || player.CollideCheckOutside<Solid>(player.Position - Vector2.UnitX));
+            var wasTryingGoLeft = data.Get<bool?>("wasTryingGoLeft") ?? false;
+            var bumpLeft = player.CollideCheck<Solid>(player.Position - Vector2.UnitX) || player.CollideCheckOutside<Solid>(player.Position - Vector2.UnitX);
+            var tryingGoLeft = Input.MoveX < 0;
             data.Set("wasBumpLeft", bumpLeft);
-            if (bumpLeft && !wasBumpLeft)
+            data.Set("wasTryingGoLeft", tryingGoLeft);
+            if (bumpLeft && (!wasBumpLeft || (tryingGoLeft && !wasTryingGoLeft)))
             {
-                bump = true;
+                MakeBumpSound(player, -Vector2.UnitX);
             }
 
             var wasBumpRight = data.Get<bool?>("wasBumpRight") ?? false;
-            var bumpRight = player.Speed.X > 0 && (player.CollideCheck<Solid>(player.Position + Vector2.UnitX) || player.CollideCheckOutside<Solid>(player.Position + Vector2.UnitX));
+            var wasTryingGoRight = data.Get<bool?>("wasTryingGoRight") ?? false;
+            var bumpRight = player.CollideCheck<Solid>(player.Position + Vector2.UnitX) || player.CollideCheckOutside<Solid>(player.Position + Vector2.UnitX);
+            var tryingGoRight = Input.MoveX > 0;
             data.Set("wasBumpRight", bumpRight);
-            if (bumpRight && !wasBumpRight)
+            data.Set("wasTryingGoRight", tryingGoRight);
+            if (bumpRight && (!wasBumpRight || (tryingGoRight && !wasTryingGoRight)))
             {
-                bump = true;
+                MakeBumpSound(player, Vector2.UnitX);
             }
 
             var wasBumpUp = data.Get<bool?>("wasBumpUp") ?? false;
-            var bumpUp = player.Speed.Y < 0 && (player.CollideCheck<Solid>(player.Position - Vector2.UnitY) || player.CollideCheckOutside<Solid>(player.Position - Vector2.UnitY));
+            var wasTryingGoUp = data.Get<bool?>("wasTryingGoUp") ?? false;
+            var bumpUp = player.CollideCheck<Solid>(player.Position - Vector2.UnitY) || player.CollideCheckOutside<Solid>(player.Position - Vector2.UnitY);
+            var tryingGoUp = Input.MoveY < 0;
             data.Set("wasBumpUp", bumpUp);
-            if (bumpUp && !wasBumpUp)
+            data.Set("wasTryingGoUp", tryingGoUp);
+            if (bumpUp && (!wasBumpUp || (tryingGoUp && !wasTryingGoUp)))
             {
-                bump = true;
+                MakeBumpSound(player, -Vector2.UnitY);
             }
 
             var wasBumpDown = data.Get<bool?>("wasBumpDown") ?? false;
+            var wasTryingGoDown = data.Get<bool?>("wasTryingGoDown") ?? false;
             var bumpDown = data.Get<bool?>("onGround") ?? false;
+            var tryingGoDown = Input.MoveY > 0;
             data.Set("wasBumpDown", bumpDown);
-            if (bumpDown && !wasBumpDown)
+            data.Set("wasTryingGoDown", tryingGoDown);
+            if (bumpDown && (!wasBumpDown || (tryingGoDown && !wasTryingGoDown)))
             {
-                bump = true;
+                MakeBumpSound(player, Vector2.UnitY);
             }
+        }
 
-            if (!bump)
-            {
-                return;
-            }
-
-            var soundPos = player.Position;
-            if (player.Speed.X > 0)
-            {
-                soundPos.X += player.Collider.Width;
-            }
-            if (player.Speed.Y > 0)
-            {
-                soundPos.Y += player.Collider.Height;
-            }
+        public static void MakeBumpSound(this Player player, Vector2 direction, float multiplier = 128)
+        {
+            var soundPos = player.SceneAs<Level>().Camera.Position + new Vector2(320f, 180f) / 2f;
+            soundPos += direction * multiplier;
             Audio.Play("event:/Celestibility/bump_3d", soundPos);
         }
 
