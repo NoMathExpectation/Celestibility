@@ -84,6 +84,9 @@ namespace NoMathExpectation.Celeste.Celestibility
 
         [SettingName("Celestibility_setting_camera")]
         public bool Camera { get; set; } = true;
+        [SettingName("Celestibility_setting_camera_move_with_player")]
+        [SettingSubText("Celestibility_setting_camera_move_with_player_desc")]
+        public bool CameraMoveWithPlayer { get; set; } = true;
         [SettingName("Celestibility_setting_bind_toggle_camera")]
         public ButtonBinding CameraBind { get; set; } = new ButtonBinding(0, Keys.Y);
         [SettingName("Celestibility_setting_bind_move_camera_to_player")]
@@ -104,6 +107,7 @@ namespace NoMathExpectation.Celeste.Celestibility
         public ButtonBinding CameraPosition { get; set; } = new ButtonBinding(0, Keys.OemOpenBrackets);
         [SettingName("Celestibility_setting_bind_player_position")]
         public ButtonBinding PlayerPosition { get; set; } = new ButtonBinding(0, Keys.OemCloseBrackets);
+
         [SettingName("Celestibility_setting_narrate_tutorial")]
         public ButtonBinding Tutorial { get; set; } = new ButtonBinding(0, Keys.T);
 

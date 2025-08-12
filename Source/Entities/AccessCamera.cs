@@ -13,6 +13,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         public static AccessCamera Instance;
         public static bool Enabled => CelestibilityModule.Settings.Camera;
         public static bool Toggled => CelestibilityModule.Settings.CameraBind.Pressed;
+        public static bool MoveWithPlayer => CelestibilityModule.Settings.CameraMoveWithPlayer;
 
         public static bool MoveToPlayerPressed => CelestibilityModule.Settings.CameraMoveToPlayer.Pressed;
         public static bool MoveLeft => CelestibilityModule.Settings.CameraMoveLeft.Pressed;
@@ -23,6 +24,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         public static bool NarrateEntity => CelestibilityModule.Settings.CameraNarrate.Pressed;
         public static bool CameraPosition => CelestibilityModule.Settings.CameraPosition.Pressed;
         public static bool PlayerPosition => CelestibilityModule.Settings.PlayerPosition.Pressed;
+
+        private Vector2 prevPlayerPos = Vector2.Zero;
 
         public AccessCamera()
         {
@@ -50,7 +53,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             }
         }
 
-        public void MoveToPlayer()
+        public void MoveToPlayer(bool narrate = true)
         {
             Player player = Scene.Tracker.GetEntity<Player>();
             if (player is null)
@@ -60,7 +63,11 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
             X = player.X;
             Y = player.Y - 4;
-            Narrate();
+
+            if (narrate)
+            {
+                Narrate();
+            }
         }
 
         public void Move()
@@ -149,6 +156,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
         {
             base.Update();
 
+            Player player = Scene.Tracker.GetEntity<Player>();
+
             if (Toggled)
             {
                 CelestibilityModuleSettings.ToggleCamera();
@@ -166,7 +175,6 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
             if (PlayerPosition)
             {
-                Player player = Scene.Tracker.GetEntity<Player>();
                 if (player is not null)
                 {
                     $"{player.X}, {player.Y}".SpeechSay(true);
@@ -176,10 +184,19 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             if (Toggled || MoveToPlayerPressed)
             {
                 MoveToPlayer();
-                return;
+            }
+            else if (MoveWithPlayer && prevPlayerPos != (player?.Position ?? Vector2.Zero))
+            {
+                MoveToPlayer(false);
+            }
+            else
+            {
+                Move();
             }
 
-            Move();
+
+
+            prevPlayerPos = player?.Position ?? prevPlayerPos;
         }
 
         public override void Render()
