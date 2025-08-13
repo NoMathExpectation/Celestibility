@@ -233,8 +233,39 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
         }
 
+        public static bool GroundBumpUseVanillaSound => CelestibilityModule.Settings.GroundBumpUseVanillaSound;
+
+        public static void MakeVanillaBumpSound(this Player player, Vector2 direction, float multiplier = 128)
+        {
+            var platform = SurfaceIndex.GetPlatformByPriority(player.CollideAll<Platform>(player.Position + Vector2.UnitY));
+            if (platform is null)
+            {
+                return;
+            }
+
+            var idx = platform.GetLandSoundIndex(player);
+            if (idx < 0)
+            {
+                return;
+            }
+
+            var sound = SurfaceIndex.GetPathFromIndex(idx) + "/landing";
+            var surfaceIndex = SurfaceIndex.GetSoundParamFromIndex(idx);
+
+            var soundPos = player.SceneAs<Level>().Camera.Position + new Vector2(320f, 180f) / 2f;
+            soundPos += direction * multiplier;
+            var eventInstance = Audio.Play(sound, soundPos, "surface_index", surfaceIndex);
+            eventInstance.setVolume(3);
+        }
+
         public static void MakeBumpSound(this Player player, Vector2 direction, float multiplier = 128)
         {
+            if (GroundBumpUseVanillaSound && direction.Y > 0)
+            {
+                player.MakeVanillaBumpSound(direction, multiplier);
+                return;
+            }
+
             var soundPos = player.SceneAs<Level>().Camera.Position + new Vector2(320f, 180f) / 2f;
             soundPos += direction * multiplier;
             Audio.Play("event:/Celestibility/bump_3d", soundPos);

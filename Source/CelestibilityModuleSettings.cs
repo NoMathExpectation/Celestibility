@@ -160,6 +160,8 @@ namespace NoMathExpectation.Celeste.Celestibility
         [SettingName("Celestibility_setting_check_bump")]
         [SettingSubText("Celestibility_setting_check_bump_desc")]
         public bool CheckBump { get; set; } = true;
+        [SettingName("Celestibility_setting_ground_bump_use_vanilla_sound")]
+        public bool GroundBumpUseVanillaSound { get; set; } = false;
 
         [SettingSubMenu]
         public class DebugSubMenu
