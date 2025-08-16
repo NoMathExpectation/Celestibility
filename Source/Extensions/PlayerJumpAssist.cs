@@ -10,6 +10,12 @@ namespace NoMathExpectation.Celeste.Celestibility.Extensions
 
         private static EventInstance soundInstance = null;
 
+        private static void StopSound()
+        {
+            soundInstance?.stop(STOP_MODE.IMMEDIATE);
+            soundInstance = null;
+        }
+
         private static void PlayerUpdate(On.Celeste.Player.orig_Update orig, Player self)
         {
             orig(self);
@@ -21,15 +27,13 @@ namespace NoMathExpectation.Celeste.Celestibility.Extensions
 
             var data = DynamicData.For(self);
             var varJumpTimer = data.Get<float>("varJumpTimer");
-            if (!Enabled || varJumpTimer <= 0)
+            if (!Enabled || varJumpTimer <= 0 || self.Dead)
             {
-                soundInstance.stop(STOP_MODE.IMMEDIATE);
-                soundInstance = null;
+                StopSound();
                 return;
             }
 
             float pitch = 1f + (0.2f - varJumpTimer) / 0.2f * 5f;
-            LogUtil.Log($"{pitch}");
             soundInstance.setPitch(pitch);
         }
 
