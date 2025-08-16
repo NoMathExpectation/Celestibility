@@ -76,6 +76,9 @@ Celestibility_setting_check_bump=Check Bump
 Celestibility_setting_check_bump_desc=Play sound when the player bumps into soilds or platforms.
 Celestibility_setting_ground_bump_use_vanilla_sound=Use Vanilla Sound On Ground Bump
 
+Celestibility_setting_jump_height_assist=Jump Height Assist
+Celestibility_setting_jump_height_assist_desc=Use sound with pitch to hint the jump height.
+
 Celestibility_setting_debug=Debug Options
 Celestibility_setting_debug_dump_unknown_entities=Dump Unknown Entities
 Celestibility_setting_debug_dump_unknown_entities_desc=Output unknown entities to a file for translation.

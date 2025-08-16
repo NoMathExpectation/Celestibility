@@ -163,6 +163,10 @@ namespace NoMathExpectation.Celeste.Celestibility
         [SettingName("Celestibility_setting_ground_bump_use_vanilla_sound")]
         public bool GroundBumpUseVanillaSound { get; set; } = false;
 
+        [SettingName("Celestibility_setting_jump_height_assist")]
+        [SettingSubText("Celestibility_setting_jump_height_assist_desc")]
+        public bool JumpHeightAssist { get; set; } = false;
+
         [SettingSubMenu]
         public class DebugSubMenu
         {

@@ -8,6 +8,7 @@ using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using NoMathExpectation.Celeste.Celestibility.Entities;
+using NoMathExpectation.Celeste.Celestibility.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -74,6 +75,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             ChapterExtension.Hook();
 
             CollisionRadar.Hook();
+
+            PlayerJumpAssist.Hook();
         }
 
         internal static void Unhook()
@@ -141,6 +144,8 @@ namespace NoMathExpectation.Celeste.Celestibility
             ChapterExtension.Unhook();
 
             CollisionRadar.Unhook();
+
+            PlayerJumpAssist.Unhook();
         }
 
         private static IEnumerator OuiTitleScreenEnter(On.Celeste.OuiTitleScreen.orig_Enter orig, OuiTitleScreen self, Oui from)
