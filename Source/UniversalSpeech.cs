@@ -172,6 +172,20 @@ namespace NoMathExpectation.Celeste.Celestibility
                 }
             }
 
+            if (item is TextMenu.LanguageButton languageButton)
+            {
+                text += ", " + languageButton.Language.Label;
+            }
+
+            if (item.GetType().Name == "LanguageOption")
+            {
+                var languageSelected = data.Get<Language>("Language");
+                if (languageSelected is not null)
+                {
+                    text += ", " + languageSelected.Label;
+                }
+            }
+
             if (!string.IsNullOrEmpty(text))
             {
                 LogUtil.Log($"Textmenu item text found: {text}", LogLevel.Verbose);
