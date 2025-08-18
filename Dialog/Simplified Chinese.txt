@@ -84,6 +84,8 @@ Celestibility_setting_jump_height_assist_desc=使用带音高的声音提示跳�
 Celestibility_setting_debug=调试选项
 Celestibility_setting_debug_dump_unknown_entities=输出未知实体
 Celestibility_setting_debug_dump_unknown_entities_desc=输出未知实体到文件以供翻译。
+Celestibility_setting_debug_radar_distance_scale=雷达距离倍率
+Celestibility_setting_debug_radar_distance_scale_desc=设置雷达声音来源与玩家之间的距离倍率。10为正常倍率。
 
 Celestibility_speech_Keys_Enter=回车
 Celestibility_speech_Keys_CapsLock=大小写锁定键

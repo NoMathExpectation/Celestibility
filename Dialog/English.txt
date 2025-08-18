@@ -84,6 +84,8 @@ Celestibility_setting_jump_height_assist_desc=Use sound with pitch to hint the j
 Celestibility_setting_debug=Debug Options
 Celestibility_setting_debug_dump_unknown_entities=Dump Unknown Entities
 Celestibility_setting_debug_dump_unknown_entities_desc=Output unknown entities to a file for translation.
+Celestibility_setting_debug_radar_distance_scale=Radar Distance Scale
+Celestibility_setting_debug_radar_distance_scale_desc=Set the scale of the distance between the radar sound and the player. 10 is the normal scale.
 
 Celestibility_speech_entity_text_Celeste_Strawberry_uncollected=Uncollected
 Celestibility_speech_entity_text_Celeste_Strawberry_collected=Collected

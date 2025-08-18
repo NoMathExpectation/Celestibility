@@ -173,6 +173,13 @@ namespace NoMathExpectation.Celeste.Celestibility
             [SettingName("Celestibility_setting_debug_dump_unknown_entities")]
             [SettingSubText("Celestibility_setting_debug_dump_unknown_entities_desc")]
             public bool DumpUnknownEntities { get; set; } = false;
+
+            [SettingName("Celestibility_setting_debug_radar_distance_scale")]
+            [SettingSubText("Celestibility_setting_debug_radar_distance_scale_desc")]
+            [SettingRange(0, 100, true)]
+            public int RadarDistanceScale { get; set; } = 10;
+
+            public float RadarDistanceScaleF => RadarDistanceScale / 10f;
         }
 
         [SettingName("Celestibility_setting_debug")]

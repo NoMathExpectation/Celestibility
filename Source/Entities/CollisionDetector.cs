@@ -30,6 +30,8 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
 
         public static bool PlayOnStill => CelestibilityModule.Settings.RadarPlayOnStill;
 
+        public static float DistanceScale => CelestibilityModule.Settings.Debug.RadarDistanceScaleF;
+
         public CollisionDetector(Player player, string name, Vector2 direction, float pitch = 100)
         {
             Visible = false;
@@ -83,7 +85,7 @@ namespace NoMathExpectation.Celeste.Celestibility.Entities
             {
                 pos.Y += Collider.Height;
             }
-            pos = SceneAs<Level>().GetPlayerBasedSoundPosition(pos);
+            pos = SceneAs<Level>().GetPlayerBasedSoundPosition(pos, DistanceScale);
 
             Audio.Play("event:/Celestibility/radar", pos, "pitch", Pitch);
             playCooldown = 0.125f;
