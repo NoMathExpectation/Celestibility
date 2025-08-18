@@ -8,7 +8,9 @@ Celestibility_saved=Progress Saved
 
 Celestibility_OptionSubMenu_press_hint=Press to configure submenu options
 
-Celestibility_Binding_unbound=no binding
+Celestibility_Binding_unbound=No Binding
+
+Celestibility_SubHeader_none=No Title
 
 Celestibility_BirdTutorialGui_Vector2_up_left=up left
 Celestibility_BirdTutorialGui_Vector2_up_zero=up

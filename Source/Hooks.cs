@@ -174,22 +174,62 @@ namespace NoMathExpectation.Celeste.Celestibility
             data.Set("origFocused", self.Focused);
         }
 
+        private static SubHeader FindSectionSubHeader(List<Item> items, int current)
+        {
+            for (int i = current - 1; i >= 0; i--)
+            {
+                var item = items[i];
+                if (item is SubHeader subHeader && item is not EaseInSubHeaderExt)
+                {
+                    return subHeader;
+                }
+            }
+            return null;
+        }
+
         private static void TextMenuMoveSelection(On.Celeste.TextMenu.orig_MoveSelection orig, TextMenu self, int direction, bool wiggle = false)
         {
             orig(self, direction, wiggle);
             self.Current.SpeechSay();
+
+            DynamicData data = DynamicData.For(self);
+            var prevSubHeaderTitle = data.Get<string>("prevSubHeaderTitle");
+            var subHeaderTitle = FindSectionSubHeader(self.Items, self.Selection)?.Title ?? "Celestibility_SubHeader_none";
+            if (prevSubHeaderTitle != subHeaderTitle)
+            {
+                subHeaderTitle.SpeechSay();
+            }
+            data.Set("prevSubHeaderTitle", subHeaderTitle);
         }
 
         private static void SubMenuMoveSelection(On.Celeste.TextMenuExt.SubMenu.orig_MoveSelection orig, TextMenuExt.SubMenu self, int direction, bool wiggle = false)
         {
             orig(self, direction, wiggle);
             self.Current.SpeechSay();
+
+            DynamicData data = DynamicData.For(self);
+            var prevSubHeaderTitle = data.Get<string>("prevSubHeaderTitle");
+            var subHeaderTitle = FindSectionSubHeader(self.Items, self.Selection)?.Title ?? "Celestibility_SubHeader_none";
+            if (prevSubHeaderTitle != subHeaderTitle)
+            {
+                subHeaderTitle.SpeechSay();
+            }
+            data.Set("prevSubHeaderTitle", subHeaderTitle);
         }
 
         private static void OptionSubMenuMoveSelection(On.Celeste.TextMenuExt.OptionSubMenu.orig_MoveSelection orig, TextMenuExt.OptionSubMenu self, int direction, bool wiggle = false)
         {
             orig(self, direction, wiggle);
             self.Current.SpeechSay();
+
+            DynamicData data = DynamicData.For(self);
+            var prevSubHeaderTitle = data.Get<string>("prevSubHeaderTitle");
+            var subHeaderTitle = FindSectionSubHeader(self.CurrentMenu, self.Selection)?.Title ?? "Celestibility_SubHeader_none";
+            if (prevSubHeaderTitle != subHeaderTitle)
+            {
+                subHeaderTitle.SpeechSay();
+            }
+            data.Set("prevSubHeaderTitle", subHeaderTitle);
         }
 
         private static ILHook ModTextMenuUpdateHook = null;

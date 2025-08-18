@@ -10,6 +10,8 @@ Celestibility_OptionSubMenu_press_hint=按下以展开选项菜单
 
 Celestibility_Binding_unbound=未绑定按键
 
+Celestibility_SubHeader_none=无标题
+
 Celestibility_BirdTutorialGui_Vector2_up_left=左上
 Celestibility_BirdTutorialGui_Vector2_up_zero=上
 Celestibility_BirdTutorialGui_Vector2_up_right=右上
