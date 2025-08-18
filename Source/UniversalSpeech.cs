@@ -197,6 +197,11 @@ namespace NoMathExpectation.Celeste.Celestibility
             }
         }
 
+        public static void SpeechSay(this SubHeader subHeader, bool interrupt = false)
+        {
+            subHeader.Title.SpeechSay(interrupt);
+        }
+
         public static void SpeechSay(this FancyText.Text text, int start = 0, int end = int.MaxValue, bool interrupt = true)
         {
             if (!Enabled || text is null)

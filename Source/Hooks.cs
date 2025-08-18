@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using static Celeste.TextMenu;
+using static Celeste.TextMenuExt;
 
 namespace NoMathExpectation.Celeste.Celestibility
 {
@@ -33,6 +34,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             ModTextMenuUpdateHook = new ILHook(typeof(TextMenu).GetMethod("orig_Update"), ModTextMenuUpdate<TextMenu>);
             IL.Celeste.TextMenuExt.SubMenu.Update += ModTextMenuUpdate<TextMenuExt.SubMenu>;
             IL.Celeste.TextMenuExt.OptionSubMenu.Update += ModTextMenuUpdate<TextMenuExt.OptionSubMenu>;
+            On.Celeste.TextMenuExt.EaseInSubHeaderExt.Update += EaseInSubHeaderExtUpdate;
 
             //On.Celeste.FancyText.Text.Draw += FancyTextTextDraw;
             ModTextboxRunRoutineHook = new ILHook(typeof(Textbox).GetMethod("RunRoutine", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetStateMachineTarget(), ModTextboxRunRoutine);
@@ -93,6 +95,7 @@ namespace NoMathExpectation.Celeste.Celestibility
             ModTextMenuUpdateHook = null;
             IL.Celeste.TextMenuExt.SubMenu.Update -= ModTextMenuUpdate<TextMenuExt.SubMenu>;
             IL.Celeste.TextMenuExt.OptionSubMenu.Update -= ModTextMenuUpdate<TextMenuExt.OptionSubMenu>;
+            On.Celeste.TextMenuExt.EaseInSubHeaderExt.Update -= EaseInSubHeaderExtUpdate;
 
             //On.Celeste.FancyText.Text.Draw -= FancyTextTextDraw;
             ModTextboxRunRoutineHook.Dispose();
@@ -200,6 +203,16 @@ namespace NoMathExpectation.Celeste.Celestibility
                 cursor.EmitReference(true);
                 cursor.EmitDelegate<Action<Item, bool>>(UniversalSpeech.SpeechSay);
             }
+        }
+
+        private static void EaseInSubHeaderExtUpdate(On.Celeste.TextMenuExt.EaseInSubHeaderExt.orig_Update orig, EaseInSubHeaderExt self)
+        {
+            if (self.FadeVisible && self.FadeVisible != self.Visible)
+            {
+                self.SpeechSay();
+            }
+
+            orig(self);
         }
 
         private static FancyText.Text CurrentText = null;
